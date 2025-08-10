@@ -6,10 +6,6 @@ const path = require('path');
 
 const app = express();
 
-// Rate limiting debe ir antes que las rutas
-const { limitarAPI } = require('./middleware/rateLimiting');
-app.use('/api', limitarAPI);
-
 // Middleware de seguridad
 app.use(helmet());
 
@@ -22,12 +18,25 @@ app.use(cors({
 // Logging
 app.use(morgan('combined'));
 
+// Rate limiting debe ir antes que las rutas
+const { limitarAPI } = require('./middleware/rateLimiting');
+app.use('/api', limitarAPI);
+
 // Parsear JSON y URL encoded
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Servir archivos estáticos (uploads)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Ruta de prueba
+app.get('/api/test', (req, res) => {
+    res.json({ 
+        mensaje: 'API funcionando correctamente',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+    });
+});
 
 // Importar rutas
 const authRoutes = require('./routes/authRoutes');
@@ -44,15 +53,6 @@ app.use('/api/catalogos', catalogosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
 app.use('/api/reportes', reportesRoutes);
-
-// Ruta de prueba
-app.get('/api/test', (req, res) => {
-    res.json({ 
-        mensaje: 'API funcionando correctamente',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0'
-    });
-});
 
 // Documentación con Swagger
 const swaggerUi = require('swagger-ui-express');

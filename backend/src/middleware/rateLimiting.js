@@ -12,6 +12,14 @@ const limitarLogin = rateLimit({
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Para express-rate-limit v7
+    handler: (req, res) => {
+        res.status(429).json({
+            error: 'Demasiados intentos de login',
+            message: 'Has excedido el límite de intentos de login. Intenta de nuevo en 15 minutos.',
+            tiempoEspera: '15 minutos'
+        });
+    }
 });
 
 // Rate limiting general para API
@@ -24,6 +32,13 @@ const limitarAPI = rateLimit({
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Para express-rate-limit v7
+    handler: (req, res) => {
+        res.status(429).json({
+            error: 'Demasiadas solicitudes',
+            message: 'Has excedido el límite de solicitudes por IP. Intenta de nuevo más tarde.'
+        });
+    }
 });
 
 module.exports = {

@@ -2,12 +2,84 @@
 const database = require('../config/database');
 const { hashPassword, verificarPassword, generarToken } = require('../utils/auth');
 
+// Setup inicial - Crear primer usuario administrador (SIN AUTENTICACIÓN)
+const setupAdmin = async (req, res) => {
+    try {
+        // Verificar si ya existe algún administrador
+        const adminExistente = await database.query(`
+            SELECT COUNT(*) as total FROM Usuarios WHERE Rol = 'Administrador'
+        `);
+
+        if (adminExistente.recordset[0].total > 0) {
+            return res.status(400).json({
+                error: 'Setup ya completado',
+                message: 'Ya existe al menos un administrador en el sistema'
+            });
+        }
+
+        const { 
+            nombreUsuario = 'admin', 
+            email = 'admin@sistema.com', 
+            password, 
+            nombres = 'Administrador', 
+            apellidos = 'Sistema' 
+        } = req.body;
+
+        if (!password) {
+            return res.status(400).json({
+                error: 'Contraseña requerida',
+                message: 'Debe proporcionar una contraseña para el administrador'
+            });
+        }
+
+        // Verificar si el usuario o email ya existen
+        const existeUsuario = await database.query(`
+            SELECT UsuarioID FROM Usuarios 
+            WHERE NombreUsuario = @param0 OR Email = @param1
+        `, [nombreUsuario, email]);
+
+        if (existeUsuario.recordset.length > 0) {
+            return res.status(400).json({
+                error: 'Usuario ya existe',
+                message: 'Ya existe un usuario con ese nombre de usuario o email'
+            });
+        }
+
+        // Hash de la contraseña
+        const claveHash = await hashPassword(password);
+
+        // Insertar administrador inicial - ESTRUCTURA EXACTA
+        const result = await database.query(`
+            INSERT INTO Usuarios (NombreUsuario, Email, ClaveHash, Nombres, Apellidos, 
+                                Rol, Departamento, Activo, FechaCreacion)
+            OUTPUT INSERTED.UsuarioID, INSERTED.NombreUsuario, INSERTED.Email, 
+                   INSERTED.Nombres, INSERTED.Apellidos, INSERTED.Rol
+            VALUES (@param0, @param1, @param2, @param3, @param4, 'Administrador', 'Sistemas', 1, GETDATE())
+        `, [nombreUsuario, email, claveHash, nombres, apellidos]);
+
+        const nuevoAdmin = result.recordset[0];
+
+        res.status(201).json({
+            mensaje: 'Administrador inicial creado exitosamente',
+            usuario: nuevoAdmin,
+            siguientePaso: 'Ahora puedes hacer login con estas credenciales'
+        });
+
+    } catch (error) {
+        console.error('Error en setup inicial:', error);
+        res.status(500).json({
+            error: 'Error interno',
+            message: 'Error creando el administrador inicial'
+        });
+    }
+};
+
 // Login de usuario
 const login = async (req, res) => {
     try {
         const { nombreUsuario, password } = req.body;
 
-        // Buscar usuario en la base de datos
+        // Buscar usuario en la base de datos - COLUMNAS EXACTAS
         const result = await database.query(`
             SELECT UsuarioID, NombreUsuario, Email, ClaveHash, Nombres, Apellidos, 
                    Rol, Departamento, UbicacionID, Activo
@@ -37,7 +109,7 @@ const login = async (req, res) => {
         // Generar token
         const token = generarToken(usuario);
 
-        // Actualizar último acceso
+        // Actualizar último acceso - COLUMNA EXISTE
         await database.query(`
             UPDATE Usuarios 
             SET UltimoAcceso = GETDATE() 
@@ -63,7 +135,7 @@ const login = async (req, res) => {
     }
 };
 
-// Registro de usuario (solo para admins)
+// Registro de usuario (solo para admins) - ESTRUCTURA EXACTA
 const registrarUsuario = async (req, res) => {
     try {
         const { 
@@ -94,14 +166,14 @@ const registrarUsuario = async (req, res) => {
         // Hash de la contraseña
         const claveHash = await hashPassword(password);
 
-        // Insertar nuevo usuario
+        // Insertar nuevo usuario - TODAS LAS COLUMNAS EXACTAS
         const result = await database.query(`
             INSERT INTO Usuarios (NombreUsuario, Email, ClaveHash, Nombres, Apellidos, 
-                                Cedula, Rol, Departamento, UbicacionID, CreadoPor)
+                                Cedula, Rol, Departamento, UbicacionID, Activo, FechaCreacion)
             OUTPUT INSERTED.UsuarioID, INSERTED.NombreUsuario, INSERTED.Email, 
-                   INSERTED.Nombres, INSERTED.Apellidos, INSERTED.Rol
-            VALUES (@param0, @param1, @param2, @param3, @param4, @param5, @param6, @param7, @param8, @param9)
-        `, [nombreUsuario, email, claveHash, nombres, apellidos, cedula, rol, departamento, ubicacionId, req.usuario.UsuarioID]);
+                   INSERTED.Nombres, INSERTED.Apellidos, INSERTED.Rol, INSERTED.Departamento
+            VALUES (@param0, @param1, @param2, @param3, @param4, @param5, @param6, @param7, @param8, 1, GETDATE())
+        `, [nombreUsuario, email, claveHash, nombres, apellidos, cedula, rol, departamento, ubicacionId]);
 
         const nuevoUsuario = result.recordset[0];
 
@@ -124,9 +196,10 @@ const obtenerPerfil = async (req, res) => {
     try {
         const usuarioId = req.usuario.UsuarioID;
 
+        // Consulta con COLUMNAS EXACTAS
         const result = await database.query(`
             SELECT u.UsuarioID, u.NombreUsuario, u.Email, u.Nombres, u.Apellidos, 
-                   u.Cedula, u.Rol, u.Departamento, u.FechaCreacion, u.UltimoAcceso,
+                   u.Cedula, u.Rol, u.Departamento, u.FechaCreacion, u.FechaActualizacion, u.UltimoAcceso,
                    ub.NombreUbicacion, ub.Ciudad, ub.Provincia
             FROM Usuarios u
             LEFT JOIN Ubicaciones ub ON u.UbicacionID = ub.UbicacionID
@@ -182,7 +255,7 @@ const cambiarPassword = async (req, res) => {
         // Hash de la nueva contraseña
         const nuevoHash = await hashPassword(passwordNuevo);
 
-        // Actualizar contraseña
+        // Actualizar contraseña - CON FechaActualizacion
         await database.query(`
             UPDATE Usuarios 
             SET ClaveHash = @param0, FechaActualizacion = GETDATE()
@@ -220,6 +293,7 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
+    setupAdmin,
     login,
     registrarUsuario,
     obtenerPerfil,

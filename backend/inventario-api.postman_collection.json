@@ -1,0 +1,694 @@
+{
+  "info": {
+    "name": "Sistema Inventario API - Completa",
+    "description": "Colección completa de endpoints para el sistema de inventario con token configurado",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "inventario-api-complete",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvSWQiOjMsIm5vbWJyZVVzdWFyaW8iOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZW1wcmVzYS5jb20uZWMiLCJyb2wiOiJBZG1pbmlzdHJhZG9yIiwiaWF0IjoxNzU0ODYwMDgwLCJleHAiOjE3NTQ5NDY0ODB9.wt6Dvv4oWVq2f7xcc6jU6ToBtQcUA3Fyw0aDg9yZ634",
+      "type": "string"
+    },
+    {
+      "key": "device_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "archivo_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Autenticación",
+      "item": [
+        {
+          "name": "🚀 Setup Admin Inicial",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"admin\",\n  \"email\": \"admin@empresa.com.ec\",\n  \"password\": \"admin123\",\n  \"nombres\": \"Administrador\",\n  \"apellidos\": \"del Sistema\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/setup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "setup"]
+            }
+          }
+        },
+        {
+          "name": "🔑 Login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.token);",
+                  "    console.log('✅ Token actualizado:', response.token.substring(0, 50) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "👤 Obtener Perfil",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "👥 Registrar Nuevo Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"tecnico1\",\n  \"email\": \"tecnico1@empresa.com.ec\",\n  \"password\": \"tecnico123\",\n  \"nombres\": \"Juan\",\n  \"apellidos\": \"Técnico\",\n  \"cedula\": \"1234567890\",\n  \"rol\": \"Tecnico\",\n  \"departamento\": \"IT\",\n  \"ubicacionId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "🔒 Cambiar Contraseña",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"admin123\",\n  \"passwordNuevo\": \"nuevaPassword123\",\n  \"confirmPassword\": \"nuevaPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "🚪 Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📚 Catálogos",
+      "item": [
+        {
+          "name": "📁 Obtener Categorías",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/catalogos/categorias",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "categorias"]
+            }
+          }
+        },
+        {
+          "name": "🏷️ Obtener Marcas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/catalogos/marcas",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "marcas"]
+            }
+          }
+        },
+        {
+          "name": "🏢 Obtener Ubicaciones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/catalogos/ubicaciones",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "ubicaciones"]
+            }
+          }
+        },
+        {
+          "name": "🏪 Obtener Proveedores",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/catalogos/proveedores",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "proveedores"]
+            }
+          }
+        },
+        {
+          "name": "➕ Crear Categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCategoria\": \"Laptops\",\n  \"descripcion\": \"Computadoras portátiles para trabajo y estudio\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/catalogos/categorias",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "categorias"]
+            }
+          }
+        },
+        {
+          "name": "➕ Crear Marca",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreMarca\": \"Dell\",\n  \"descripcion\": \"Fabricante líder en equipos de cómputo y servidores\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/catalogos/marcas",
+              "host": ["{{base_url}}"],
+              "path": ["catalogos", "marcas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💻 Dispositivos",
+      "item": [
+        {
+          "name": "📋 Obtener Todos los Dispositivos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "description": "Número de página"
+                },
+                {
+                  "key": "limite",
+                  "value": "10",
+                  "description": "Elementos por página"
+                },
+                {
+                  "key": "categoria",
+                  "value": "",
+                  "description": "ID de categoría",
+                  "disabled": true
+                },
+                {
+                  "key": "marca",
+                  "value": "",
+                  "description": "ID de marca",
+                  "disabled": true
+                },
+                {
+                  "key": "estado",
+                  "value": "",
+                  "description": "Disponible, Asignado, En Reparacion, etc.",
+                  "disabled": true
+                },
+                {
+                  "key": "buscar",
+                  "value": "",
+                  "description": "Término de búsqueda",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "📊 Obtener Estadísticas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos/estadisticas",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "estadisticas"]
+            }
+          }
+        },
+        {
+          "name": "🔍 Obtener Dispositivo por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos/{{device_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "{{device_id}}"]
+            }
+          }
+        },
+        {
+          "name": "➕ Crear Dispositivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreDispositivo\": \"Laptop Dell Inspiron 15\",\n  \"categoriaId\": 1,\n  \"marcaId\": 1,\n  \"modelo\": \"Inspiron 15 3520\",\n  \"numeroSerie\": \"DLL123456789\",\n  \"numeroParte\": \"INS-3520-001\",\n  \"procesador\": \"Intel Core i5-1235U\",\n  \"memoriaRAM\": \"8GB DDR4\",\n  \"almacenamiento\": \"512GB SSD\",\n  \"sistemaOperativo\": \"Windows 11 Pro\",\n  \"versionSO\": \"22H2\",\n  \"proveedorId\": 1,\n  \"fechaCompra\": \"2024-01-15\",\n  \"precioCompra\": 650.00,\n  \"vencimientoGarantia\": \"2027-01-15\",\n  \"numeroFactura\": \"FACT-2024-001\",\n  \"estado\": \"Disponible\",\n  \"condicion\": \"Excelente\",\n  \"ubicacionId\": 1,\n  \"observaciones\": \"Equipo nuevo en caja, con todos los accesorios\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/dispositivos",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.dispositivo && response.dispositivo.DispositivoID) {",
+                  "        pm.collectionVariables.set('device_id', response.dispositivo.DispositivoID);",
+                  "        console.log('✅ Device ID actualizado:', response.dispositivo.DispositivoID);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "✏️ Actualizar Dispositivo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"En Reparacion\",\n  \"condicion\": \"Regular\",\n  \"observaciones\": \"Pantalla con problemas de brillo. Enviado a reparación el {{ new Date().toISOString().split('T')[0] }}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/dispositivos/{{device_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "{{device_id}}"]
+            }
+          }
+        },
+        {
+          "name": "🗑️ Dar de Baja Dispositivo",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/dispositivos/{{device_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "{{device_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📎 Archivos de Dispositivos",
+      "item": [
+        {
+          "name": "📤 Subir Archivos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivos",
+                  "type": "file",
+                  "src": [],
+                  "description": "Seleccionar uno o más archivos (máximo 5)"
+                },
+                {
+                  "key": "tipoAdjunto",
+                  "value": "Factura",
+                  "type": "text",
+                  "description": "Opciones: Factura, Manual, Foto, Garantia, Otro"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/dispositivos/{{device_id}}/archivos",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "{{device_id}}", "archivos"]
+            }
+          }
+        },
+        {
+          "name": "🗑️ Eliminar Archivo",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/dispositivos/{{device_id}}/archivos/{{archivo_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos", "{{device_id}}", "archivos", "{{archivo_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Búsquedas y Filtros",
+      "item": [
+        {
+          "name": "🔍 Buscar por Texto",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?buscar=laptop&pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "buscar",
+                  "value": "laptop"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "📁 Filtrar por Categoría",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?categoria=1&pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "1"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "✅ Filtrar por Estado Disponible",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?estado=Disponible&pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "Disponible"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "🔧 Filtrar por Estado En Reparación",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?estado=En Reparacion&pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "En Reparacion"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "🏷️ Filtrar por Marca",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?marca=1&pagina=1&limite=10",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "marca",
+                  "value": "1"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "🎯 Filtros Combinados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dispositivos?categoria=1&marca=1&estado=Disponible&buscar=laptop&pagina=1&limite=5",
+              "host": ["{{base_url}}"],
+              "path": ["dispositivos"],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "1"
+                },
+                {
+                  "key": "marca",
+                  "value": "1"
+                },
+                {
+                  "key": "estado",
+                  "value": "Disponible"
+                },
+                {
+                  "key": "buscar",
+                  "value": "laptop"
+                },
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🚧 Placeholders (Por Implementar)",
+      "item": [
+        {
+          "name": "👥 Usuarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "📋 Asignaciones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/asignaciones",
+              "host": ["{{base_url}}"],
+              "path": ["asignaciones"]
+            }
+          }
+        },
+        {
+          "name": "📊 Reportes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/reportes",
+              "host": ["{{base_url}}"],
+              "path": ["reportes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Test",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/test",
+          "host": ["{{base_url}}"],
+          "path": ["test"]
+        }
+      }
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script que se ejecuta antes de cada request",
+          "console.log('🚀 Ejecutando request a:', pm.request.url);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script que se ejecuta después de cada response",
+          "console.log('✅ Response status:', pm.response.code, pm.response.status);"
+        ]
+      }
+    }
+  ]
+}

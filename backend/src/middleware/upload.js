@@ -77,9 +77,15 @@ const manejarErroresUpload = (error, req, res, next) => {
                 message: 'Máximo 5 archivos por solicitud'
             });
         }
+        if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+            return res.status(400).json({
+                error: 'Campo de archivo inesperado',
+                message: 'Campo de archivo no válido'
+            });
+        }
     }
     
-    if (error.message.includes('Tipo de archivo no permitido')) {
+    if (error && error.message.includes('Tipo de archivo no permitido')) {
         return res.status(400).json({
             error: 'Tipo de archivo no válido',
             message: error.message
