@@ -1,3 +1,4 @@
+// src/middleware/upload.js - Configuración de subida de archivos
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
