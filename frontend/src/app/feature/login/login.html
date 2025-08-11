@@ -1,0 +1,13 @@
+<div class="login-container">
+  <form (ngSubmit)="login()">
+    <label>Usuario:</label>
+    <input [(ngModel)]="nombreUsuario" name="nombreUsuario" required />
+
+    <label>Contraseña:</label>
+    <input [(ngModel)]="password" name="password" type="password" required />
+
+    <button type="submit">Ingresar</button>
+  </form>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="token" class="token">Token: {{ token }}</div>
+</div>
