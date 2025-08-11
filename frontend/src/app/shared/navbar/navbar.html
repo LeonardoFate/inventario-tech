@@ -1,23 +1,76 @@
+<!-- frontend/src/app/shared/navbar/navbar.html -->
 <nav class="navbar">
   <div class="nav-links">
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/dispositivos" routerLinkActive="active">Dispositivos</a>
+    <!-- Dashboard - para todos -->
+    <a routerLink="/dashboard" routerLinkActive="active">
+      📊 Dashboard
+    </a>
     
+    <!-- Dispositivos - para todos -->
+    <a routerLink="/dispositivos" routerLinkActive="active">
+      💻 Dispositivos
+    </a>
+    
+    <!-- Asignaciones - para Técnicos y superiores -->
+    <a *ngIf="esTecnicoOSuperior" routerLink="/asignaciones" routerLinkActive="active">
+      👥 Asignaciones
+    </a>
+    
+    <!-- Reportes - para Gerentes y superiores -->
+    <a *ngIf="isAdminOGerente" routerLink="/reportes" routerLinkActive="active">
+      📈 Reportes
+    </a>
+    
+    <!-- Dropdown de Catálogos - para Admin y Gerente -->
     <div class="dropdown" *ngIf="isAdminOGerente">
-      <a href="#" class="dropdown-toggle">Catálogos</a>
+      <a href="#" class="dropdown-toggle">📋 Catálogos</a>
       <div class="dropdown-menu">
-        <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
-        <a routerLink="/marcas" routerLinkActive="active">Marcas</a>
-        <a routerLink="/ubicaciones" routerLinkActive="active">Ubicaciones</a>
-        <a routerLink="/proveedores" routerLinkActive="active">Proveedores</a>
+        <a routerLink="/categorias" routerLinkActive="active">
+          🏷️ Categorías
+        </a>
+        <a routerLink="/marcas" routerLinkActive="active">
+          🔖 Marcas
+        </a>
+        <a routerLink="/ubicaciones" routerLinkActive="active">
+          📍 Ubicaciones
+        </a>
+        <a routerLink="/proveedores" routerLinkActive="active">
+          🏢 Proveedores
+        </a>
       </div>
     </div>
     
-    <a routerLink="/usuarios" routerLinkActive="active" *ngIf="isAdmin">Usuarios</a>
+    <!-- Usuarios - solo para Admin -->
+    <a routerLink="/usuarios" routerLinkActive="active" *ngIf="isAdmin">
+      👤 Usuarios
+    </a>
   </div>
   
   <div class="user-info">
-    <span *ngIf="currentUser">{{ currentUser.nombres }} ({{ currentUser.rol }})</span>
-    <button (click)="logout()" class="logout-btn">Salir</button>
+    <div class="user-details" *ngIf="currentUser">
+      <div class="user-avatar">
+        {{ (currentUser.nombres.charAt(0) || '') + (currentUser.apellidos.charAt(0) || '') }}
+      </div>
+      <div class="user-text">
+        <div class="user-name">{{ currentUser.nombres }} {{ currentUser.apellidos }}</div>
+        <div class="user-role">{{ currentUser.rol }}</div>
+      </div>
+    </div>
+    
+    <div class="dropdown user-dropdown">
+      <button class="dropdown-toggle user-menu-btn">⚙️</button>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a href="#" (click)="verPerfil($event)">
+          👤 Mi Perfil
+        </a>
+        <a href="#" (click)="cambiarPassword($event)">
+          🔐 Cambiar Contraseña
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="#" (click)="logout($event)" class="logout-link">
+          🚪 Cerrar Sesión
+        </a>
+      </div>
+    </div>
   </div>
 </nav>

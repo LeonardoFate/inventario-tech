@@ -3,7 +3,7 @@ import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Dispositivo, Categoria, Marca, Ubicacion, Proveedor, Estadisticas } from '../models';
-
+import { tap } from 'rxjs/operators';
 import { Usuario } from '../models';
 import { UsuariosService } from './UsuariosService';
 
@@ -51,14 +51,25 @@ getUsuarios(): Observable<Usuario[]> {
     );
   }
 
-  getDispositivo(id: number): Observable<any> {
-    const url = `${this.API_URL}/dispositivos/${id}`;
-    console.log('Llamando a getDispositivo:', url);
-    
-    return this.http.get(url).pipe(
-      catchError(this.handleError)
-    );
-  }
+getDispositivo(id: number): Observable<any> {
+  const url = `${this.API_URL}/dispositivos/${id}`;
+  console.log('🔍 DataService - Llamando a getDispositivo:', url);
+  
+  return this.http.get<any>(url).pipe(
+    tap((response: any) => {
+      console.log('✅ DataService - Respuesta getDispositivo:', response);
+      console.log('📄 Estructura del dispositivo:', response?.dispositivo ? Object.keys(response.dispositivo) : 'Sin dispositivo');
+    }),
+    catchError(error => {
+      console.error('❌ DataService - Error getDispositivo:', error);
+      console.error('📄 Error status:', error.status);
+      console.error('📄 Error message:', error.message);
+      console.error('📄 Error completo:', error);
+      return this.handleError(error);
+    })
+  );
+}
+
 
   crearDispositivo(dispositivo: Partial<Dispositivo>): Observable<any> {
     const url = `${this.API_URL}/dispositivos`;

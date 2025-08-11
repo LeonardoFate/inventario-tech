@@ -1,3 +1,5 @@
+// Reemplaza tu archivo dispositivos-detalle.ts con este código corregido:
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -5,12 +7,6 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/AuthService';
 import { environment } from '../../../environments/environment';
-
-interface DispositivoDetalle {
-  dispositivo: any;
-  archivos: any[];
-  historial: any[];
-}
 
 @Component({
   selector: 'app-dispositivo-detalle',
@@ -38,22 +34,25 @@ interface DispositivoDetalle {
 
       <div *ngIf="error" class="error">
         {{ error }}
+        <button (click)="cargarDispositivo()" class="btn btn-primary" style="margin-top: 10px;">
+          🔄 Reintentar
+        </button>
       </div>
 
       <div *ngIf="dispositivo && !loading" class="dispositivo-detalle">
         <!-- Información básica -->
         <div class="card">
           <div class="card-header">
-            <h2>{{ dispositivo.nombreDispositivo }}</h2>
+            <h2>{{ dispositivo.NombreDispositivo || dispositivo.nombreDispositivo || 'Dispositivo sin nombre' }}</h2>
             <div class="badges">
-              <span class="badge" [ngClass]="getEstadoClass(dispositivo.estado)">
-                {{ dispositivo.estado }}
+              <span class="badge" [ngClass]="getEstadoClass(dispositivo.Estado || dispositivo.estado || '')">
+                {{ dispositivo.Estado || dispositivo.estado || 'Sin estado' }}
               </span>
-              <span class="badge" [ngClass]="getCondicionClass(dispositivo.condicion)">
-                {{ dispositivo.condicion }}
+              <span class="badge" [ngClass]="getCondicionClass(dispositivo.Condicion || dispositivo.condicion || '')">
+                {{ dispositivo.Condicion || dispositivo.condicion || 'Sin condición' }}
               </span>
-              <span class="badge" [ngClass]="getGarantiaClass(dispositivo.estadoGarantia)">
-                Garantía: {{ dispositivo.estadoGarantia }}
+              <span class="badge" [ngClass]="getGarantiaClass(dispositivo.EstadoGarantia || dispositivo.estadoGarantia || '')">
+                Garantía: {{ dispositivo.EstadoGarantia || dispositivo.estadoGarantia || 'No disponible' }}
               </span>
             </div>
           </div>
@@ -62,35 +61,35 @@ interface DispositivoDetalle {
             <div class="info-grid">
               <div class="info-item">
                 <label>Código:</label>
-                <span>{{ dispositivo.codigoDispositivo }}</span>
+                <span>{{ dispositivo.CodigoDispositivo || dispositivo.codigoDispositivo || 'N/A' }}</span>
               </div>
               <div class="info-item">
                 <label>Categoría:</label>
-                <span>{{ dispositivo.nombreCategoria }}</span>
+                <span>{{ dispositivo.NombreCategoria || dispositivo.nombreCategoria || 'Sin categoría' }}</span>
               </div>
               <div class="info-item">
                 <label>Marca:</label>
-                <span>{{ dispositivo.nombreMarca }}</span>
+                <span>{{ dispositivo.NombreMarca || dispositivo.nombreMarca || 'Sin marca' }}</span>
               </div>
               <div class="info-item">
                 <label>Modelo:</label>
-                <span>{{ dispositivo.modelo }}</span>
+                <span>{{ dispositivo.Modelo || dispositivo.modelo || 'Sin modelo' }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.numeroSerie">
+              <div class="info-item" *ngIf="dispositivo.NumeroSerie || dispositivo.numeroSerie">
                 <label>Número de Serie:</label>
-                <span>{{ dispositivo.numeroSerie }}</span>
+                <span>{{ dispositivo.NumeroSerie || dispositivo.numeroSerie }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.numeroParte">
+              <div class="info-item" *ngIf="dispositivo.NumeroParte || dispositivo.numeroParte">
                 <label>Número de Parte:</label>
-                <span>{{ dispositivo.numeroParte }}</span>
+                <span>{{ dispositivo.NumeroParte || dispositivo.numeroParte }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.nombreUbicacion">
+              <div class="info-item" *ngIf="dispositivo.NombreUbicacion || dispositivo.nombreUbicacion">
                 <label>Ubicación:</label>
-                <span>{{ dispositivo.nombreUbicacion }}</span>
+                <span>{{ dispositivo.NombreUbicacion || dispositivo.nombreUbicacion }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.nombreProveedor">
+              <div class="info-item" *ngIf="dispositivo.NombreProveedor || dispositivo.nombreProveedor">
                 <label>Proveedor:</label>
-                <span>{{ dispositivo.nombreProveedor }}</span>
+                <span>{{ dispositivo.NombreProveedor || dispositivo.nombreProveedor }}</span>
               </div>
             </div>
           </div>
@@ -103,25 +102,25 @@ interface DispositivoDetalle {
           </div>
           <div class="card-body">
             <div class="info-grid">
-              <div class="info-item" *ngIf="dispositivo.procesador">
+              <div class="info-item" *ngIf="dispositivo.Procesador || dispositivo.procesador">
                 <label>Procesador:</label>
-                <span>{{ dispositivo.procesador }}</span>
+                <span>{{ dispositivo.Procesador || dispositivo.procesador }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.memoriaRAM">
+              <div class="info-item" *ngIf="dispositivo.MemoriaRAM || dispositivo.memoriaRAM">
                 <label>Memoria RAM:</label>
-                <span>{{ dispositivo.memoriaRAM }}</span>
+                <span>{{ dispositivo.MemoriaRAM || dispositivo.memoriaRAM }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.almacenamiento">
+              <div class="info-item" *ngIf="dispositivo.Almacenamiento || dispositivo.almacenamiento">
                 <label>Almacenamiento:</label>
-                <span>{{ dispositivo.almacenamiento }}</span>
+                <span>{{ dispositivo.Almacenamiento || dispositivo.almacenamiento }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.sistemaOperativo">
+              <div class="info-item" *ngIf="dispositivo.SistemaOperativo || dispositivo.sistemaOperativo">
                 <label>Sistema Operativo:</label>
-                <span>{{ dispositivo.sistemaOperativo }}</span>
+                <span>{{ dispositivo.SistemaOperativo || dispositivo.sistemaOperativo }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.versionSO">
+              <div class="info-item" *ngIf="dispositivo.VersionSO || dispositivo.versionSO">
                 <label>Versión SO:</label>
-                <span>{{ dispositivo.versionSO }}</span>
+                <span>{{ dispositivo.VersionSO || dispositivo.versionSO }}</span>
               </div>
             </div>
           </div>
@@ -134,21 +133,21 @@ interface DispositivoDetalle {
           </div>
           <div class="card-body">
             <div class="info-grid">
-              <div class="info-item" *ngIf="dispositivo.fechaCompra">
+              <div class="info-item" *ngIf="dispositivo.FechaCompra || dispositivo.fechaCompra">
                 <label>Fecha de Compra:</label>
-                <span>{{ dispositivo.fechaCompra | date:'dd/MM/yyyy' }}</span>
+                <span>{{ (dispositivo.FechaCompra || dispositivo.fechaCompra) | date:'dd/MM/yyyy' }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.precioCompra">
+              <div class="info-item" *ngIf="dispositivo.PrecioCompra || dispositivo.precioCompra">
                 <label>Precio de Compra:</label>
-                <span>\${{ dispositivo.precioCompra | number:'1.2-2' }}</span>
+                <span>\${{ (dispositivo.PrecioCompra || dispositivo.precioCompra) | number:'1.2-2' }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.vencimientoGarantia">
+              <div class="info-item" *ngIf="dispositivo.VencimientoGarantia || dispositivo.vencimientoGarantia">
                 <label>Vencimiento Garantía:</label>
-                <span>{{ dispositivo.vencimientoGarantia | date:'dd/MM/yyyy' }}</span>
+                <span>{{ (dispositivo.VencimientoGarantia || dispositivo.vencimientoGarantia) | date:'dd/MM/yyyy' }}</span>
               </div>
-              <div class="info-item" *ngIf="dispositivo.numeroFactura">
+              <div class="info-item" *ngIf="dispositivo.NumeroFactura || dispositivo.numeroFactura">
                 <label>Número de Factura:</label>
-                <span>{{ dispositivo.numeroFactura }}</span>
+                <span>{{ dispositivo.NumeroFactura || dispositivo.numeroFactura }}</span>
               </div>
             </div>
           </div>
@@ -168,14 +167,14 @@ interface DispositivoDetalle {
             <div *ngIf="archivos.length > 0" class="archivos-lista">
               <div *ngFor="let archivo of archivos" class="archivo-item">
                 <div class="archivo-info">
-                  <i class="file-icon" [ngClass]="getFileIcon(archivo.tipoArchivo)"></i>
+                  <i class="file-icon" [ngClass]="getFileIcon(archivo.TipoArchivo || archivo.tipoArchivo)"></i>
                   <div>
-                    <div class="archivo-nombre">{{ archivo.nombreArchivo }}</div>
+                    <div class="archivo-nombre">{{ archivo.NombreArchivo || archivo.nombreArchivo }}</div>
                     <div class="archivo-meta">
-                      {{ archivo.tipoAdjunto }} • 
-                      {{ formatFileSize(archivo.tamanoArchivo) }} • 
-                      {{ archivo.fechaSubida | date:'dd/MM/yyyy HH:mm' }} • 
-                      {{ archivo.subidoPor }}
+                      {{ archivo.TipoAdjunto || archivo.tipoAdjunto }} • 
+                      {{ formatFileSize(archivo.TamanoArchivo || archivo.tamanoArchivo) }} • 
+                      {{ (archivo.FechaSubida || archivo.fechaSubida) | date:'dd/MM/yyyy HH:mm' }} • 
+                      {{ archivo.SubidoPor || archivo.subidoPor }}
                     </div>
                   </div>
                 </div>
@@ -203,13 +202,13 @@ interface DispositivoDetalle {
             <div *ngIf="historial.length > 0" class="historial-lista">
               <div *ngFor="let evento of historial" class="historial-item">
                 <div class="historial-fecha">
-                  {{ evento.fechaAccion | date:'dd/MM/yyyy HH:mm' }}
+                  {{ (evento.FechaAccion || evento.fechaAccion) | date:'dd/MM/yyyy HH:mm' }}
                 </div>
                 <div class="historial-contenido">
-                  <div class="historial-accion">{{ evento.accion }}</div>
-                  <div class="historial-usuario">por {{ evento.realizadoPor }}</div>
-                  <div *ngIf="evento.comentarios" class="historial-comentarios">
-                    {{ evento.comentarios }}
+                  <div class="historial-accion">{{ evento.Accion || evento.accion }}</div>
+                  <div class="historial-usuario">por {{ evento.RealizadoPor || evento.realizadoPor }}</div>
+                  <div *ngIf="evento.Comentarios || evento.comentarios" class="historial-comentarios">
+                    {{ evento.Comentarios || evento.comentarios }}
                   </div>
                 </div>
               </div>
@@ -218,12 +217,12 @@ interface DispositivoDetalle {
         </div>
 
         <!-- Observaciones -->
-        <div class="card" *ngIf="dispositivo.observaciones">
+        <div class="card" *ngIf="dispositivo.Observaciones || dispositivo.observaciones">
           <div class="card-header">
             <h3>Observaciones</h3>
           </div>
           <div class="card-body">
-            <p>{{ dispositivo.observaciones }}</p>
+            <p>{{ dispositivo.Observaciones || dispositivo.observaciones }}</p>
           </div>
         </div>
       </div>
@@ -335,6 +334,28 @@ interface DispositivoDetalle {
       }
     }
 
+    .loading, .error {
+      text-align: center;
+      padding: 40px;
+      font-size: 16px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      border-left: 4px solid #f44336;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-style: italic;
+    }
+
     .archivos-lista {
       display: flex;
       flex-direction: column;
@@ -437,7 +458,8 @@ interface DispositivoDetalle {
       &.estado-disponible { background: #e8f5e8; color: #4caf50; }
       &.estado-asignado { background: #fff3e0; color: #ff9800; }
       &.estado-reparacion { background: #ffebee; color: #f44336; }
-      &.estado-baja { background: #f3e5f5; color: #9c27b0; }
+      &.estado-baja, &.estado-dado-de-baja { background: #f3e5f5; color: #9c27b0; }
+      &.estado-perdido { background: #e8eaf6; color: #3f51b5; }
       
       &.condicion-excelente { background: #e8f5e8; color: #4caf50; }
       &.condicion-bueno { background: #f1f8e9; color: #8bc34a; }
@@ -449,38 +471,125 @@ interface DispositivoDetalle {
       &.garantia-vencida { background: #ffebee; color: #f44336; }
     }
 
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.2s ease;
+      
+      &.btn-primary { background: #1976d2; color: white; }
+      &.btn-success { background: #4caf50; color: white; }
+      &.btn-warning { background: #f57c00; color: white; }
+      &.btn-danger { background: #d32f2f; color: white; }
+      &.btn-info { background: #0288d1; color: white; }
+      &.btn-outline { 
+        background: transparent; 
+        color: #1976d2; 
+        border: 1px solid #1976d2; 
+      }
+      
+      &.btn-sm { padding: 4px 8px; font-size: 12px; }
+      
+      &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      
+      h2 { margin: 0; }
+      
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+    }
+
+    .modal-body { padding: 20px; }
+
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      
+      input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     @media (max-width: 768px) {
       .header-actions {
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
         
-        .actions {
-          justify-content: center;
-        }
+        .actions { justify-content: center; }
       }
       
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
+      .info-grid { grid-template-columns: 1fr; }
       
       .archivo-item {
         flex-direction: column;
         gap: 10px;
         align-items: stretch;
         
-        .archivo-actions {
-          justify-content: center;
-        }
+        .archivo-actions { justify-content: center; }
       }
       
       .historial-item {
         flex-direction: column;
         gap: 5px;
         
-        .historial-fecha {
-          width: auto;
-        }
+        .historial-fecha { width: auto; }
       }
     }
   `]
@@ -507,6 +616,8 @@ export class DispositivoDetalleComponent implements OnInit {
 
   ngOnInit() {
     this.dispositivoId = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('🔍 DispositivoDetalle - ID recibido:', this.dispositivoId);
+    
     if (this.dispositivoId) {
       this.cargarDispositivo();
     } else {
@@ -516,18 +627,22 @@ export class DispositivoDetalleComponent implements OnInit {
   }
 
   cargarDispositivo() {
+    console.log('📱 Cargando dispositivo con ID:', this.dispositivoId);
     this.loading = true;
+    this.error = '';
+    
     this.dataService.getDispositivo(this.dispositivoId).subscribe({
       next: (response) => {
+        console.log('✅ Dispositivo recibido:', response);
         this.dispositivo = response.dispositivo;
         this.archivos = response.archivos || [];
         this.historial = response.historial || [];
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Error cargando la información del dispositivo';
+        console.error('❌ Error cargando dispositivo:', error);
+        this.error = 'Error cargando la información del dispositivo: ' + (error.message || 'Error desconocido');
         this.loading = false;
-        console.error('Error:', error);
       }
     });
   }
@@ -538,11 +653,13 @@ export class DispositivoDetalleComponent implements OnInit {
 
   editarDispositivo() {
     // Implementar navegación a edición o abrir modal de edición
-    this.router.navigate(['/dispositivos', this.dispositivoId, 'editar']);
+    console.log('Editando dispositivo:', this.dispositivoId);
   }
 
   eliminarDispositivo() {
-    if (confirm(`¿Estás seguro de dar de baja el dispositivo "${this.dispositivo.nombreDispositivo}"?`)) {
+    const nombreDispositivo = this.dispositivo?.NombreDispositivo || this.dispositivo?.nombreDispositivo || 'este dispositivo';
+    
+    if (confirm(`¿Estás seguro de dar de baja ${nombreDispositivo}?`)) {
       this.dataService.eliminarDispositivo(this.dispositivoId).subscribe({
         next: () => {
           this.router.navigate(['/dispositivos']);
@@ -591,8 +708,11 @@ export class DispositivoDetalleComponent implements OnInit {
   }
 
   eliminarArchivo(archivo: any) {
-    if (confirm(`¿Estás seguro de eliminar el archivo "${archivo.nombreArchivo}"?`)) {
-      this.dataService.eliminarArchivo(this.dispositivoId, archivo.archivoID).subscribe({
+    const nombreArchivo = archivo.NombreArchivo || archivo.nombreArchivo || 'este archivo';
+    
+    if (confirm(`¿Estás seguro de eliminar ${nombreArchivo}?`)) {
+      const archivoId = archivo.ArchivoID || archivo.archivoID;
+      this.dataService.eliminarArchivo(this.dispositivoId, archivoId).subscribe({
         next: () => {
           this.cargarDispositivo(); // Recargar para actualizar la lista
         },
@@ -605,20 +725,28 @@ export class DispositivoDetalleComponent implements OnInit {
   }
 
   descargarArchivo(archivo: any) {
-    // Implementar descarga del archivo
-    const url = `${environment.apiUrl.replace('/api', '')}/${archivo.rutaArchivo}`;
+    const rutaArchivo = archivo.RutaArchivo || archivo.rutaArchivo;
+    const url = `${environment.apiUrl.replace('/api', '')}/${rutaArchivo}`;
     window.open(url, '_blank');
   }
 
   // Métodos de utilidad
   tieneEspecificaciones(): boolean {
-    return !!(this.dispositivo.procesador || this.dispositivo.memoriaRAM || 
-             this.dispositivo.almacenamiento || this.dispositivo.sistemaOperativo);
+    return !!(
+      this.dispositivo.Procesador || this.dispositivo.procesador || 
+      this.dispositivo.MemoriaRAM || this.dispositivo.memoriaRAM || 
+      this.dispositivo.Almacenamiento || this.dispositivo.almacenamiento || 
+      this.dispositivo.SistemaOperativo || this.dispositivo.sistemaOperativo
+    );
   }
 
   tieneInfoCompra(): boolean {
-    return !!(this.dispositivo.fechaCompra || this.dispositivo.precioCompra || 
-             this.dispositivo.vencimientoGarantia || this.dispositivo.numeroFactura);
+    return !!(
+      this.dispositivo.FechaCompra || this.dispositivo.fechaCompra || 
+      this.dispositivo.PrecioCompra || this.dispositivo.precioCompra || 
+      this.dispositivo.VencimientoGarantia || this.dispositivo.vencimientoGarantia || 
+      this.dispositivo.NumeroFactura || this.dispositivo.numeroFactura
+    );
   }
 
   getEstadoClass(estado: string): string {
@@ -626,7 +754,7 @@ export class DispositivoDetalleComponent implements OnInit {
       'Disponible': 'estado-disponible',
       'Asignado': 'estado-asignado',
       'En Reparacion': 'estado-reparacion',
-      'Dado de Baja': 'estado-baja',
+      'Dado de Baja': 'estado-dado-de-baja',
       'Perdido': 'estado-perdido'
     };
     return clases[estado] || '';

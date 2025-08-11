@@ -99,8 +99,8 @@
             </span>
           </td>
           <td>{{ dispositivo.NombreUbicacion || dispositivo.nombreUbicacion || 'Sin ubicación' }}</td>
-          <td class="acciones">
-            <button class="btn btn-sm btn-info">Ver</button>
+            <td class="acciones">
+            <button (click)="verDispositivo(dispositivo)" class="btn btn-sm btn-info">Ver</button>
             <button *ngIf="esTecnicoOSuperior" (click)="editarDispositivo(dispositivo)" 
                     class="btn btn-sm btn-warning">Editar</button>
             <button *ngIf="esAdmin" (click)="eliminarDispositivo(dispositivo)" 

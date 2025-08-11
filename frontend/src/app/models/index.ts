@@ -195,3 +195,48 @@ export interface Usuario {
   fechaCreacion?: string;   // Opcional - fecha de creación
   fechaUltimoAcceso?: string; // Opcional - último acceso
 }
+
+// Agregar al final de frontend/src/app/models/index.ts
+
+// Interfaces para respuestas de API
+export interface DispositivoResponse {
+  dispositivo: Dispositivo;
+  archivos: ArchivoDispositivo[];
+  historial: HistorialDispositivo[];
+}
+
+export interface ArchivoDispositivo {
+  ArchivoID?: number;
+  archivoID?: number;
+  DispositivoID?: number;
+  dispositivoID?: number;
+  NombreArchivo?: string;
+  nombreArchivo?: string;
+  TipoArchivo?: string;
+  tipoArchivo?: string;
+  RutaArchivo?: string;
+  rutaArchivo?: string;
+  TamanoArchivo?: number;
+  tamanoArchivo?: number;
+  TipoAdjunto?: string;
+  tipoAdjunto?: string;
+  FechaSubida?: string;
+  fechaSubida?: string;
+  SubidoPor?: string;
+  subidoPor?: string;
+}
+
+export interface HistorialDispositivo {
+  HistorialID?: number;
+  historialID?: number;
+  DispositivoID?: number;
+  dispositivoID?: number;
+  Accion?: string;
+  accion?: string;
+  Comentarios?: string;
+  comentarios?: string;
+  FechaAccion?: string;
+  fechaAccion?: string;
+  RealizadoPor?: string;
+  realizadoPor?: string;
+}

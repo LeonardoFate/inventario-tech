@@ -1,7 +1,8 @@
+// frontend/src/app/feature/dispositivos/dispositivos.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/AuthService';
 import { Dispositivo, Categoria, Marca, Ubicacion } from '../../models';
@@ -53,7 +54,8 @@ export class Dispositivos implements OnInit {
 
   constructor(
     private dataService: DataService,
-    public authService: AuthService  // ✅ Cambiar de 'private' a 'public'
+    public authService: AuthService,
+    private router: Router
   ) {
     console.log('📱 Dispositivos - Constructor ejecutado');
   }
@@ -139,6 +141,19 @@ export class Dispositivos implements OnInit {
     console.log('📄 Cambiando a página:', pagina);
     this.filtros.pagina = pagina;
     this.cargarDispositivos();
+  }
+
+  verDispositivo(dispositivo: Dispositivo) {
+    const dispositivoId = dispositivo.DispositivoID || dispositivo.dispositivoID;
+    console.log('🔍 Navegando a dispositivo:', dispositivoId);
+    
+    if (!dispositivoId) {
+      console.error('❌ No se pudo obtener el ID del dispositivo');
+      alert('Error: No se pudo obtener el ID del dispositivo');
+      return;
+    }
+    
+    this.router.navigate(['/dispositivos', dispositivoId]);
   }
 
   nuevoDispositivo() {
