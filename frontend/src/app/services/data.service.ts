@@ -4,15 +4,33 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Dispositivo, Categoria, Marca, Ubicacion, Proveedor, Estadisticas } from '../models';
 
+import { Usuario } from '../models';
+import { UsuariosService } from './UsuariosService';
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
   private readonly API_URL = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
-    console.log('DataService inicializado con API_URL:', this.API_URL);
-  }
+constructor(
+  private http: HttpClient,
+  private usuariosService: UsuariosService
+) {
+  console.log('DataService inicializado con API_URL:', this.API_URL);
+}
+
+
+getUsuarios(): Observable<Usuario[]> {
+  const url = `${this.API_URL}/usuarios`;
+  console.log('Llamando a getUsuarios:', url);
+  
+  return this.usuariosService.getUsuarios().pipe(
+    catchError(this.handleError)
+  );
+}
+
 
   // Dispositivos
   getDispositivos(params?: any): Observable<any> {

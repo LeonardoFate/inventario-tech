@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/AuthService';
 import { Usuario, Ubicacion } from '../../models';
+import { UsuariosService } from '../../services/UsuariosService';
 
 @Component({
   selector: 'app-usuarios',
@@ -40,47 +41,25 @@ export class Usuarios implements OnInit {
     this.cargarUbicaciones();
   }
 
-  cargarUsuarios() {
-    this.loading = true;
-    this.error = '';
-    
-    // Simular carga de usuarios (ya que la ruta real no está implementada)
-    // En un entorno real, usarías: this.dataService.getUsuarios()
-    setTimeout(() => {
-      // Datos de ejemplo basados en el usuario actual
-      const currentUser = this.authService.getCurrentUser();
-      this.usuarios = [
-        {
-          UsuarioID: currentUser?.UsuarioID || 1,
-          nombreUsuario: currentUser?.nombreUsuario || 'admin',
-          email: currentUser?.email || 'admin@empresa.com',
-          nombres: currentUser?.nombres || 'Administrador',
-          apellidos: currentUser?.apellidos || 'del Sistema',
-          rol: currentUser?.rol || 'Administrador',
-          departamento: currentUser?.departamento || 'Sistemas'
-        },
-        {
-          UsuarioID: 2,
-          nombreUsuario: 'jperez',
-          email: 'juan.perez@empresa.com',
-          nombres: 'Juan',
-          apellidos: 'Pérez',
-          rol: 'Tecnico',
-          departamento: 'Sistemas'
-        },
-        {
-          UsuarioID: 3,
-          nombreUsuario: 'mrodriguez',
-          email: 'maria.rodriguez@empresa.com',
-          nombres: 'María',
-          apellidos: 'Rodríguez',
-          rol: 'Gerente',
-          departamento: 'Operaciones'
-        }
-      ];
+cargarUsuarios() {
+  this.loading = true;
+  this.error = '';
+
+  this.dataService.getUsuarios().subscribe({
+    next: (usuarios) => {
+      console.log('✔️ Usuarios recibidos del backend:', usuarios);
+      this.usuarios = usuarios; // Asegúrate que aquí es un array
       this.loading = false;
-    }, 1000);
-  }
+    },
+    error: (err) => {
+      console.error('❌ Error al cargar usuarios:', err);
+      this.error = 'No se pudieron cargar los usuarios.';
+      this.loading = false;
+    }
+  });
+}
+
+
 
   cargarUbicaciones() {
     this.dataService.getUbicaciones().subscribe({

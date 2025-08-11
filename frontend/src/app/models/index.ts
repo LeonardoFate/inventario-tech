@@ -175,3 +175,23 @@ export interface Estadisticas {
     Cantidad: number;
   }[];
 }
+
+// Actualiza tu interface Usuario en frontend/src/app/models/index.ts
+
+export interface Usuario {
+  usuarioId?: number;
+  UsuarioID?: number;
+  nombreUsuario: string;
+  email: string;
+  nombres: string;
+  apellidos: string;
+  cedula?: string;
+  rol: string;
+  departamento?: string;
+  ubicacionId?: number;
+  // ✅ Agregar estas propiedades faltantes:
+  password?: string;        // Para formularios de creación/edición
+  activo?: boolean;         // Para indicar si el usuario está activo
+  fechaCreacion?: string;   // Opcional - fecha de creación
+  fechaUltimoAcceso?: string; // Opcional - último acceso
+}
