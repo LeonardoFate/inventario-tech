@@ -1,11 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './usuarios.html',
-  styleUrl: './usuarios.scss'
+  styleUrls: ['./usuarios.scss']
 })
-export class Usuarios {
+export class Usuarios implements OnInit {
+  
+  constructor() {}
 
+  ngOnInit() {
+    // Implementar gestión de usuarios
+  }
 }

@@ -2,20 +2,6 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/AuthService';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if (authService.isAuthenticated()) {
-    return true;
-  }
-
-  router.navigate(['/login'], { 
-    queryParams: { returnUrl: state.url } 
-  });
-  return false;
-};
-
 export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
@@ -31,21 +17,10 @@ export const roleGuard: CanActivateFn = (route, state) => {
     if (authService.hasRole(requiredRoles)) {
       return true;
     } else {
-      router.navigate(['/dashboard']);
+      router.navigate(['/unauthorized']);
       return false;
     }
   }
 
-  return true;
-};
-
-export const loginGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if (authService.isAuthenticated()) {
-    router.navigate(['/dashboard']);
-    return false;
-  }
   return true;
 };

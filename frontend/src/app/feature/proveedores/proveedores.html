@@ -1,1 +1,46 @@
-<p>proveedores works!</p>
+<div class="catalogos-container">
+  <div class="header">
+    <h1>Proveedores</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando proveedores...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="tabla-container">
+    <table class="catalogos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Contacto</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>RUC</th>
+          <th>Ciudad</th>
+          <th>Total Dispositivos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proveedor of proveedores">
+          <td>{{ proveedor.proveedorID }}</td>
+          <td>{{ proveedor.nombreProveedor }}</td>
+          <td>{{ proveedor.nombreContacto || '-' }}</td>
+          <td>{{ proveedor.email || '-' }}</td>
+          <td>{{ proveedor.telefono || '-' }}</td>
+          <td>{{ proveedor.ruc || '-' }}</td>
+          <td>{{ proveedor.ciudad || '-' }}</td>
+          <td>{{ proveedor.totalDispositivos }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="proveedores.length === 0" class="no-data">
+      No hay proveedores registrados.
+    </div>
+  </div>
+</div>

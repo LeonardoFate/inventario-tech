@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from './shared/navbar/navbar';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/AuthService';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +12,31 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
-export class App {
-  constructor(private router: Router) {}
+export class App implements OnInit {
+  mostrarNavbar = false;
+  isAuthenticated = false;
 
-  get mostrarNavbar() {
-    return this.router.url !== '/login';
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    // Suscribirse a cambios de autenticación
+    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+      this.isAuthenticated = isLoggedIn;
+      this.updateNavbarVisibility();
+    });
+
+    // Suscribirse a cambios de ruta
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateNavbarVisibility();
+      });
+  }
+
+  private updateNavbarVisibility() {
+    this.mostrarNavbar = this.isAuthenticated && this.router.url !== '/login';
   }
 }

@@ -1,1 +1,46 @@
-<p>ubicaciones works!</p>
+<div class="catalogos-container">
+  <div class="header">
+    <h1>Ubicaciones</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando ubicaciones...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="tabla-container">
+    <table class="catalogos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Piso</th>
+          <th>Edificio</th>
+          <th>Ciudad</th>
+          <th>Provincia</th>
+          <th>Total Dispositivos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ubicacion of ubicaciones">
+          <td>{{ ubicacion.ubicacionID }}</td>
+          <td>{{ ubicacion.nombreUbicacion }}</td>
+          <td>{{ ubicacion.direccion || '-' }}</td>
+          <td>{{ ubicacion.piso || '-' }}</td>
+          <td>{{ ubicacion.edificio || '-' }}</td>
+          <td>{{ ubicacion.ciudad || '-' }}</td>
+          <td>{{ ubicacion.provincia || '-' }}</td>
+          <td>{{ ubicacion.totalDispositivos }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="ubicaciones.length === 0" class="no-data">
+      No hay ubicaciones registradas.
+    </div>
+  </div>
+</div>

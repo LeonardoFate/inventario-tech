@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 
 @Component({
@@ -14,20 +15,42 @@ export class LoginComponent {
   nombreUsuario = '';
   password = '';
   error = '';
-  token = '';
+  loading = false;
+  returnUrl = '';
 
-  constructor(private auth: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+  }
 
   login() {
-    this.auth.login({ nombreUsuario: this.nombreUsuario, password: this.password })
-      .subscribe({
-        next: (res) => {
-          this.token = res.token;
-          this.error = '';
-        },
-        error: () => {
-          this.error = 'Usuario o contraseña incorrectos';
+    if (!this.nombreUsuario || !this.password) {
+      this.error = 'Por favor ingrese usuario y contraseña';
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    this.authService.login({ 
+      nombreUsuario: this.nombreUsuario, 
+      password: this.password 
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.router.navigate([this.returnUrl]);
         }
-      });
+      },
+      error: (error) => {
+        this.error = error.error?.message || 'Usuario o contraseña incorrectos';
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 }

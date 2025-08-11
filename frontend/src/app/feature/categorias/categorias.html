@@ -1,1 +1,72 @@
-<p>categorias works!</p>
+<div class="catalogos-container">
+  <div class="header">
+    <h1>Gestión de Categorías</h1>
+    <button (click)="nuevaCategoria()" class="btn btn-primary">
+      Nueva Categoría
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando categorías...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="tabla-container">
+    <table class="catalogos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Total Dispositivos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let categoria of categorias">
+          <td>{{ categoria.categoriaID }}</td>
+          <td>{{ categoria.nombreCategoria }}</td>
+          <td>{{ categoria.descripcion || 'Sin descripción' }}</td>
+          <td>{{ categoria.totalDispositivos }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="marcas.length === 0" class="no-data">
+      No hay marcas registradas.
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="mostrarModal" class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nueva Marca</h2>
+      <button (click)="cerrarModal()" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="guardarMarca()">
+        <div class="form-group">
+          <label>Nombre de la Marca *</label>
+          <input type="text" [(ngModel)]="marcaActual.nombreMarca" 
+                 name="nombreMarca" required placeholder="Ej: Dell, HP, Lenovo, etc.">
+        </div>
+        
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea [(ngModel)]="marcaActual.descripcion" name="descripcion" 
+                    rows="3" placeholder="Descripción opcional..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" (click)="cerrarModal()" class="btn btn-outline">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,23 @@
 <nav class="navbar">
-  <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-  <a routerLink="/dispositivos" routerLinkActive="active">Dispositivos</a>
-  <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
-  <a routerLink="/marcas" routerLinkActive="active">Marcas</a>
-  <a routerLink="/ubicaciones" routerLinkActive="active">Ubicaciones</a>
-  <a routerLink="/proveedores" routerLinkActive="active">Proveedores</a>
-  <a routerLink="/usuarios" routerLinkActive="active">Usuarios</a>
-  <a routerLink="/login" routerLinkActive="active">Salir</a>
+  <div class="nav-links">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/dispositivos" routerLinkActive="active">Dispositivos</a>
+    
+    <div class="dropdown" *ngIf="isAdminOGerente">
+      <a href="#" class="dropdown-toggle">Catálogos</a>
+      <div class="dropdown-menu">
+        <a routerLink="/categorias" routerLinkActive="active">Categorías</a>
+        <a routerLink="/marcas" routerLinkActive="active">Marcas</a>
+        <a routerLink="/ubicaciones" routerLinkActive="active">Ubicaciones</a>
+        <a routerLink="/proveedores" routerLinkActive="active">Proveedores</a>
+      </div>
+    </div>
+    
+    <a routerLink="/usuarios" routerLinkActive="active" *ngIf="isAdmin">Usuarios</a>
+  </div>
+  
+  <div class="user-info">
+    <span *ngIf="currentUser">{{ currentUser.nombres }} ({{ currentUser.rol }})</span>
+    <button (click)="logout()" class="logout-btn">Salir</button>
+  </div>
 </nav>

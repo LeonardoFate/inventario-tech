@@ -1,13 +1,32 @@
 <div class="login-container">
   <form (ngSubmit)="login()">
+    <h2>Iniciar Sesión</h2>
+    
     <label>Usuario:</label>
-    <input [(ngModel)]="nombreUsuario" name="nombreUsuario" required />
+    <input 
+      [(ngModel)]="nombreUsuario" 
+      name="nombreUsuario" 
+      required 
+      [disabled]="loading"
+      placeholder="Ingrese su usuario" />
 
     <label>Contraseña:</label>
-    <input [(ngModel)]="password" name="password" type="password" required />
+    <input 
+      [(ngModel)]="password" 
+      name="password" 
+      type="password" 
+      required 
+      [disabled]="loading"
+      placeholder="Ingrese su contraseña" />
 
-    <button type="submit">Ingresar</button>
+    <button 
+      type="submit" 
+      [disabled]="loading || !nombreUsuario || !password">
+      {{ loading ? 'Ingresando...' : 'Ingresar' }}
+    </button>
   </form>
-  <div *ngIf="error" class="error">{{ error }}</div>
-  <div *ngIf="token" class="token">Token: {{ token }}</div>
+  
+  <div *ngIf="error" class="error">
+    <strong>Error:</strong> {{ error }}
+  </div>
 </div>

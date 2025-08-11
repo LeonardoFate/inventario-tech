@@ -1,1 +1,77 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard - Sistema de Inventario</h1>
+    <p *ngIf="usuario">Bienvenido, {{ usuario.nombres }} {{ usuario.apellidos }}</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando estadísticas...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="estadisticas && !loading" class="dashboard-content">
+    <!-- Tarjetas de resumen -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <h3>Total Dispositivos</h3>
+        <p class="stat-number">{{ estadisticas.general.totalDispositivos }}</p>
+      </div>
+      
+      <div class="stat-card disponible">
+        <h3>Disponibles</h3>
+        <p class="stat-number">{{ estadisticas.general.disponibles }}</p>
+      </div>
+      
+      <div class="stat-card asignado">
+        <h3>Asignados</h3>
+        <p class="stat-number">{{ estadisticas.general.asignados }}</p>
+      </div>
+      
+      <div class="stat-card reparacion">
+        <h3>En Reparación</h3>
+        <p class="stat-number">{{ estadisticas.general.enReparacion }}</p>
+      </div>
+    </div>
+
+    <!-- Valor del inventario -->
+    <div class="valor-inventario">
+      <h3>Valor Total del Inventario</h3>
+      <p class="valor-total">${{ estadisticas.general.valorTotalInventario | number:'1.2-2' }}</p>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="quick-actions">
+      <h3>Accesos Rápidos</h3>
+      <div class="actions-grid">
+        <a routerLink="/dispositivos" class="action-card">
+          <h4>Ver Dispositivos</h4>
+          <p>Gestionar inventario</p>
+        </a>
+        
+        <a routerLink="/dispositivos" [queryParams]="{estado: 'Disponible'}" class="action-card">
+          <h4>Dispositivos Disponibles</h4>
+          <p>{{ estadisticas.general.disponibles }} disponibles</p>
+        </a>
+        
+        <a *ngIf="usuario?.rol === 'Administrador'" routerLink="/categorias" class="action-card">
+          <h4>Gestionar Catálogos</h4>
+          <p>Categorías, marcas, ubicaciones</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Distribución por categoría -->
+    <div class="categoria-chart">
+      <h3>Dispositivos por Categoría</h3>
+      <div class="chart-items">
+        <div *ngFor="let item of estadisticas.porCategoria" class="chart-item">
+          <span class="categoria-nombre">{{ item.nombreCategoria }}</span>
+          <span class="categoria-cantidad">{{ item.cantidad }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
