@@ -133,6 +133,21 @@ const obtenerDispositivos = async (req, res) => {
 const obtenerDispositivoPorId = async (req, res) => {
     try {
         const { id } = req.params;
+        
+        console.log(`🔍 Backend - Obteniendo dispositivo con ID: ${id}`);
+        console.log(`🔍 Backend - Tipo de ID: ${typeof id}`);
+
+        // Validar que el ID sea un número válido
+        const dispositivoId = parseInt(id);
+        if (isNaN(dispositivoId) || dispositivoId <= 0) {
+            console.log(`❌ Backend - ID inválido: ${id}`);
+            return res.status(400).json({
+                error: 'ID inválido',
+                message: `El ID del dispositivo debe ser un número positivo. Recibido: ${id}`
+            });
+        }
+
+        console.log(`✅ Backend - ID validado: ${dispositivoId}`);
 
         const consulta = `
             SELECT d.*, 
@@ -153,27 +168,46 @@ const obtenerDispositivoPorId = async (req, res) => {
             WHERE d.DispositivoID = @param0
         `;
 
-        const resultado = await database.query(consulta, [id]);
+        console.log(`📡 Backend - Ejecutando consulta para dispositivo ${dispositivoId}`);
+
+        const resultado = await database.query(consulta, [dispositivoId]);
+        
+        console.log(`📊 Backend - Resultado de consulta:`, {
+            encontrados: resultado.recordset.length,
+            primerResultado: resultado.recordset[0] ? Object.keys(resultado.recordset[0]) : 'Sin resultados'
+        });
 
         if (resultado.recordset.length === 0) {
+            console.log(`❌ Backend - Dispositivo no encontrado: ${dispositivoId}`);
             return res.status(404).json({
                 error: 'Dispositivo no encontrado',
-                message: `No existe un dispositivo con ID ${id}`
+                message: `No existe un dispositivo con ID ${dispositivoId}`
             });
         }
 
+        const dispositivo = resultado.recordset[0];
+        console.log(`✅ Backend - Dispositivo encontrado:`, {
+            id: dispositivo.DispositivoID,
+            nombre: dispositivo.NombreDispositivo,
+            codigo: dispositivo.CodigoDispositivo
+        });
+
         // Obtener archivos adjuntos
+        console.log(`📎 Backend - Obteniendo archivos para dispositivo ${dispositivoId}`);
         const archivos = await database.query(`
             SELECT ArchivoID, NombreArchivo, TipoArchivo, TipoAdjunto, 
-                   TamanoArchivo, FechaSubida,
+                   TamanoArchivo, FechaSubida, RutaArchivo,
                    CONCAT(u.Nombres, ' ', u.Apellidos) as SubidoPor
             FROM ArchivosDispositivos ad
             LEFT JOIN Usuarios u ON ad.SubidoPor = u.UsuarioID
             WHERE ad.DispositivoID = @param0
             ORDER BY ad.FechaSubida DESC
-        `, [id]);
+        `, [dispositivoId]);
+
+        console.log(`📎 Backend - Archivos encontrados: ${archivos.recordset.length}`);
 
         // Obtener historial reciente
+        console.log(`📜 Backend - Obteniendo historial para dispositivo ${dispositivoId}`);
         const historial = await database.query(`
             SELECT TOP 10 h.Accion, h.Comentarios, h.FechaAccion,
                    CONCAT(u.Nombres, ' ', u.Apellidos) as RealizadoPor
@@ -181,19 +215,35 @@ const obtenerDispositivoPorId = async (req, res) => {
             LEFT JOIN Usuarios u ON h.RealizadoPor = u.UsuarioID
             WHERE h.DispositivoID = @param0
             ORDER BY h.FechaAccion DESC
-        `, [id]);
+        `, [dispositivoId]);
 
-        res.json({
-            dispositivo: resultado.recordset[0],
+        console.log(`📜 Backend - Historial encontrado: ${historial.recordset.length} registros`);
+
+        const respuesta = {
+            dispositivo: dispositivo,
             archivos: archivos.recordset,
             historial: historial.recordset
+        };
+
+        console.log(`✅ Backend - Enviando respuesta completa para dispositivo ${dispositivoId}`);
+        console.log(`📊 Backend - Estructura de respuesta:`, {
+            dispositivoKeys: Object.keys(dispositivo),
+            archivosCount: respuesta.archivos.length,
+            historialCount: respuesta.historial.length
         });
 
+        res.json(respuesta);
+
     } catch (error) {
-        console.error('Error obteniendo dispositivo:', error);
+        console.error('❌ Backend - Error obteniendo dispositivo:', error);
+        console.error('📋 Backend - Error stack:', error.stack);
+        console.error('📋 Backend - Error number:', error.number);
+        console.error('📋 Backend - Error code:', error.code);
+        
         res.status(500).json({
             error: 'Error interno',
-            message: 'Error obteniendo el dispositivo'
+            message: 'Error obteniendo el dispositivo',
+            detalles: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 };

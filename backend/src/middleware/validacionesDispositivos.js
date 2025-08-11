@@ -147,3 +147,20 @@ module.exports = {
     validarConsultas,
     manejarErroresValidacion
 };
+const validarIdDispositivo = [
+    param('id')
+        .isInt({ min: 1 })
+        .withMessage('El ID del dispositivo debe ser un número entero positivo')
+        .toInt(), // Convierte a entero automáticamente
+    
+    manejarErroresValidacion
+];
+
+// Exporta la nueva validación
+module.exports = {
+    validarCrearDispositivo,
+    validarActualizarDispositivo,
+    validarConsultas,
+    validarIdDispositivo, // ✅ Agregar esta línea
+    manejarErroresValidacion
+};

@@ -34,11 +34,22 @@ app.get('/api/test', (req, res) => {
     res.json({ 
         mensaje: 'API funcionando correctamente',
         timestamp: new Date().toISOString(),
-        version: '1.0.0'
+        version: '1.0.0',
+        modulos: [
+            'Autenticación',
+            'Dispositivos',
+            'Catálogos',
+            'Usuarios',
+            'Asignaciones',
+            'Reportes',
+            'Clientes (POS)',
+            'Ventas (POS)',
+            'POS'
+        ]
     });
 });
 
-// Importar rutas
+// Importar rutas existentes
 const authRoutes = require('./routes/authRoutes');
 const dispositivosRoutes = require('./routes/dispositivosRoutes');
 const catalogosRoutes = require('./routes/catalogosRoutes');
@@ -46,13 +57,23 @@ const usuariosRoutes = require('./routes/usuariosRoutes');
 const asignacionesRoutes = require('./routes/asignacionesRoutes');
 const reportesRoutes = require('./routes/reportesRoutes');
 
-// Rutas de la API
+// Importar nuevas rutas POS
+const clientesRoutes = require('./routes/clientesRoutes');
+const ventasRoutes = require('./routes/ventasRoutes');
+const posRoutes = require('./routes/posRoutes');
+
+// Rutas de la API - Existentes
 app.use('/api/auth', authRoutes);
 app.use('/api/dispositivos', dispositivosRoutes);
 app.use('/api/catalogos', catalogosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/asignaciones', asignacionesRoutes);
 app.use('/api/reportes', reportesRoutes);
+
+// Nuevas rutas POS
+app.use('/api/clientes', clientesRoutes);
+app.use('/api/ventas', ventasRoutes);
+app.use('/api/pos', posRoutes);
 
 // Documentación con Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -62,9 +83,9 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Sistema de Inventario API',
+            title: 'Sistema de Inventario y POS API',
             version: '1.0.0',
-            description: 'API para gestión de inventario de dispositivos tecnológicos',
+            description: 'API para gestión de inventario de dispositivos tecnológicos con sistema POS integrado',
         },
         servers: [
             {
@@ -86,18 +107,77 @@ const swaggerOptions = {
                 bearerAuth: [],
             },
         ],
+        tags: [
+            {
+                name: 'Autenticación',
+                description: 'Endpoints para autenticación y gestión de usuarios'
+            },
+            {
+                name: 'Dispositivos',
+                description: 'Gestión del inventario de dispositivos'
+            },
+            {
+                name: 'Catálogos',
+                description: 'Gestión de categorías, marcas, ubicaciones y proveedores'
+            },
+            {
+                name: 'Clientes',
+                description: 'Gestión de clientes para el sistema POS'
+            },
+            {
+                name: 'Ventas',
+                description: 'Gestión de ventas y facturación'
+            },
+            {
+                name: 'POS',
+                description: 'Funcionalidades específicas del punto de venta'
+            }
+        ]
     },
     apis: ['./src/routes/*.js'],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Sistema Inventario + POS API',
+    customfavIcon: '/favicon.ico'
+}));
+
+// Ruta para verificar el estado del sistema
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        version: '1.0.0',
+        environment: process.env.NODE_ENV || 'development',
+        database: 'Connected', // TODO: Agregar verificación real de BD
+        modules: {
+            inventario: 'Active',
+            pos: 'Active',
+            auth: 'Active'
+        }
+    });
+});
 
 // Manejo de rutas no encontradas
 app.use('*', (req, res) => {
     res.status(404).json({
         error: 'Ruta no encontrada',
-        message: `La ruta ${req.originalUrl} no existe en este servidor`
+        message: `La ruta ${req.originalUrl} no existe en este servidor`,
+        rutasDisponibles: [
+            '/api/auth',
+            '/api/dispositivos',
+            '/api/catalogos',
+            '/api/clientes',
+            '/api/ventas',
+            '/api/pos',
+            '/api/usuarios',
+            '/api/asignaciones',
+            '/api/reportes',
+            '/api-docs'
+        ]
     });
 });
 
