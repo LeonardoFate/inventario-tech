@@ -1,3 +1,5 @@
+// Interfaces actualizadas para coincidir EXACTAMENTE con el backend
+
 export interface LoginRequest {
   nombreUsuario: string;
   password: string;
@@ -23,89 +25,153 @@ export interface Usuario {
   ubicacionId?: number;
 }
 
+// ✅ DISPOSITIVO ACTUALIZADO - PascalCase como viene del backend
 export interface Dispositivo {
-  dispositivoID?: number;
-  codigoDispositivo: string;
-  nombreDispositivo: string;
-  categoriaId: number;
-  marcaId: number;
-  modelo: string;
-  numeroSerie?: string;
-  numeroParte?: string;
-  procesador?: string;
-  memoriaRAM?: string;
-  almacenamiento?: string;
-  sistemaOperativo?: string;
-  versionSO?: string;
-  proveedorId?: number;
-  fechaCompra?: string;
-  precioCompra?: number;
-  vencimientoGarantia?: string;
-  numeroFactura?: string;
-  estado: 'Disponible' | 'Asignado' | 'En Reparacion' | 'Dado de Baja' | 'Perdido';
-  condicion: 'Excelente' | 'Bueno' | 'Regular' | 'Malo';
-  ubicacionId?: number;
-  observaciones?: string;
-  nombreCategoria?: string;
-  nombreMarca?: string;
-  nombreUbicacion?: string;
-  fechaCreacion?: string;
-  fechaActualizacion?: string;
-  creadoPor?: string;
-  estadoGarantia?: string;
-  totalArchivos?: number;
+  DispositivoID?: number;          // PascalCase del backend
+  dispositivoID?: number;          // Mantener compatibilidad
+  CodigoDispositivo: string;       // PascalCase del backend
+  codigoDispositivo?: string;      // Mantener compatibilidad
+  NombreDispositivo: string;       // ⭐ Esta es la clave - PascalCase del backend
+  nombreDispositivo?: string;      // Mantener compatibilidad
+  CategoriaID?: number;            // PascalCase del backend
+  categoriaId?: number;            // Mantener compatibilidad
+  MarcaID?: number;                // PascalCase del backend
+  marcaId?: number;                // Mantener compatibilidad
+  Modelo: string;                  // PascalCase del backend
+  modelo?: string;                 // Mantener compatibilidad
+  NumeroSerie?: string;            // PascalCase del backend
+  numeroSerie?: string;            // Mantener compatibilidad
+  NumeroParte?: string;            // PascalCase del backend
+  numeroParte?: string;            // Mantener compatibilidad
+  Procesador?: string;             // PascalCase del backend
+  procesador?: string;             // Mantener compatibilidad
+  MemoriaRAM?: string;             // PascalCase del backend
+  memoriaRAM?: string;             // Mantener compatibilidad
+  Almacenamiento?: string;         // PascalCase del backend
+  almacenamiento?: string;         // Mantener compatibilidad
+  SistemaOperativo?: string;       // PascalCase del backend
+  sistemaOperativo?: string;       // Mantener compatibilidad
+  VersionSO?: string;              // PascalCase del backend
+  versionSO?: string;              // Mantener compatibilidad
+  ProveedorID?: number;            // PascalCase del backend
+  proveedorId?: number;            // Mantener compatibilidad
+  FechaCompra?: string;            // PascalCase del backend
+  fechaCompra?: string;            // Mantener compatibilidad
+  PrecioCompra?: number;           // PascalCase del backend
+  precioCompra?: number;           // Mantener compatibilidad
+  VencimientoGarantia?: string;    // PascalCase del backend
+  vencimientoGarantia?: string;    // Mantener compatibilidad
+  NumeroFactura?: string;          // PascalCase del backend
+  numeroFactura?: string;          // Mantener compatibilidad
+  Estado: 'Disponible' | 'Asignado' | 'En Reparacion' | 'Dado de Baja' | 'Perdido';  // PascalCase del backend
+  estado?: 'Disponible' | 'Asignado' | 'En Reparacion' | 'Dado de Baja' | 'Perdido'; // Mantener compatibilidad
+  Condicion: 'Excelente' | 'Bueno' | 'Regular' | 'Malo';  // PascalCase del backend
+  condicion?: 'Excelente' | 'Bueno' | 'Regular' | 'Malo'; // Mantener compatibilidad
+  UbicacionID?: number;            // PascalCase del backend
+  ubicacionId?: number;            // Mantener compatibilidad
+  Observaciones?: string;          // PascalCase del backend
+  observaciones?: string;          // Mantener compatibilidad
+  NombreCategoria?: string;        // PascalCase del backend - Viene de JOIN
+  nombreCategoria?: string;        // Mantener compatibilidad
+  NombreMarca?: string;            // PascalCase del backend - Viene de JOIN
+  nombreMarca?: string;            // Mantener compatibilidad
+  NombreUbicacion?: string;        // PascalCase del backend - Viene de JOIN
+  nombreUbicacion?: string;        // Mantener compatibilidad
+  FechaCreacion?: string;          // PascalCase del backend
+  fechaCreacion?: string;          // Mantener compatibilidad
+  FechaActualizacion?: string;     // PascalCase del backend
+  fechaActualizacion?: string;     // Mantener compatibilidad
+  CreadoPor?: string;              // PascalCase del backend
+  creadoPor?: string;              // Mantener compatibilidad
+  EstadoGarantia?: string;         // PascalCase del backend
+  estadoGarantia?: string;         // Mantener compatibilidad
+  TotalArchivos?: number;          // PascalCase del backend
+  totalArchivos?: number;          // Mantener compatibilidad
 }
 
 export interface Categoria {
-  categoriaID: number;
-  nombreCategoria: string;
-  descripcion?: string;
-  totalDispositivos: number;
+  CategoriaID: number;             // PascalCase del backend
+  categoriaID?: number;            // Mantener compatibilidad
+  NombreCategoria: string;         // PascalCase del backend
+  nombreCategoria?: string;        // Mantener compatibilidad
+  Descripcion?: string;            // PascalCase del backend
+  descripcion?: string;            // Mantener compatibilidad
+  TotalDispositivos: number;       // PascalCase del backend
+  totalDispositivos?: number;      // Mantener compatibilidad
 }
 
 export interface Marca {
-  marcaID: number;
-  nombreMarca: string;
-  descripcion?: string;
-  totalDispositivos: number;
+  MarcaID: number;                 // PascalCase del backend
+  marcaID?: number;                // Mantener compatibilidad
+  NombreMarca: string;             // PascalCase del backend
+  nombreMarca?: string;            // Mantener compatibilidad
+  Descripcion?: string;            // PascalCase del backend
+  descripcion?: string;            // Mantener compatibilidad
+  TotalDispositivos: number;       // PascalCase del backend
+  totalDispositivos?: number;      // Mantener compatibilidad
 }
 
 export interface Ubicacion {
-  ubicacionID: number;
-  nombreUbicacion: string;
-  direccion?: string;
-  piso?: string;
-  edificio?: string;
-  ciudad?: string;
-  provincia?: string;
-  totalDispositivos: number;
+  UbicacionID: number;             // PascalCase del backend
+  ubicacionID?: number;            // Mantener compatibilidad
+  NombreUbicacion: string;         // PascalCase del backend
+  nombreUbicacion?: string;        // Mantener compatibilidad
+  Direccion?: string;              // PascalCase del backend
+  direccion?: string;              // Mantener compatibilidad
+  Piso?: string;                   // PascalCase del backend
+  piso?: string;                   // Mantener compatibilidad
+  Edificio?: string;               // PascalCase del backend
+  edificio?: string;               // Mantener compatibilidad
+  Ciudad?: string;                 // PascalCase del backend
+  ciudad?: string;                 // Mantener compatibilidad
+  Provincia?: string;              // PascalCase del backend
+  provincia?: string;              // Mantener compatibilidad
+  TotalDispositivos: number;       // PascalCase del backend
+  totalDispositivos?: number;      // Mantener compatibilidad
 }
 
 export interface Proveedor {
-  proveedorID: number;
-  nombreProveedor: string;
-  nombreContacto?: string;
-  email?: string;
-  telefono?: string;
-  ruc?: string;
-  ciudad?: string;
-  totalDispositivos: number;
+  ProveedorID: number;             // PascalCase del backend
+  proveedorID?: number;            // Mantener compatibilidad
+  NombreProveedor: string;         // PascalCase del backend
+  nombreProveedor?: string;        // Mantener compatibilidad
+  NombreContacto?: string;         // PascalCase del backend
+  nombreContacto?: string;         // Mantener compatibilidad
+  Email?: string;                  // PascalCase del backend
+  email?: string;                  // Mantener compatibilidad
+  Telefono?: string;               // PascalCase del backend
+  telefono?: string;               // Mantener compatibilidad
+  RUC?: string;                    // PascalCase del backend
+  ruc?: string;                    // Mantener compatibilidad
+  Ciudad?: string;                 // PascalCase del backend
+  ciudad?: string;                 // Mantener compatibilidad
+  TotalDispositivos: number;       // PascalCase del backend
+  totalDispositivos?: number;      // Mantener compatibilidad
 }
 
 export interface Estadisticas {
   general: {
-    totalDispositivos: number;
-    disponibles: number;
-    asignados: number;
-    enReparacion: number;
-    dadosDeBaja: number;
-    perdidos: number;
-    garantiaVencida: number;
-    garantiaPorVencer: number;
-    precioPromedio: number;
-    valorTotalInventario: number;
+    TotalDispositivos: number;
+    Disponibles: number;
+    Asignados: number;
+    EnReparacion: number;
+    DadosDeBaja: number;
+    Perdidos: number;
+    GarantiaVencida: number;
+    GarantiaPorVencer: number;
+    PrecioPromedio: number;
+    ValorTotalInventario: number;
   };
-  porCategoria: { nombreCategoria: string; cantidad: number }[];
-  porMarca: { nombreMarca: string; cantidad: number }[];
-  porUbicacion: { nombreUbicacion: string; cantidad: number }[];
+  porCategoria: { 
+    NombreCategoria: string;
+    Cantidad: number;
+  }[];
+  porMarca: { 
+    NombreMarca: string;
+    Cantidad: number;
+  }[];
+  porUbicacion: { 
+    NombreUbicacion: string;
+    Cantidad: number;
+  }[];
 }

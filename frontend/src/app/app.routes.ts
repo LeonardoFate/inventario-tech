@@ -24,7 +24,7 @@ export const routes: Routes = [
     path: 'dispositivos', 
     component: Dispositivos,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Administrador', 'Gerente', 'Tecnico'] }
+    data: { roles: ['Administrador', 'Gerente', 'Tecnico', 'Empleado'] } // Agregué Empleado
   },
   { 
     path: 'categorias', 
@@ -63,6 +63,6 @@ export const routes: Routes = [
   },
   { 
     path: '**', 
-    redirectTo: '/dashboard' 
+    redirectTo: '/dashboard' // Cambié a dashboard en lugar de unauthorized
   }
 ];

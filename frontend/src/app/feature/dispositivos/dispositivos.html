@@ -19,8 +19,8 @@
         <label>Categoría:</label>
         <select [(ngModel)]="filtros.categoria">
           <option value="">Todas</option>
-          <option *ngFor="let cat of categorias" [value]="cat.categoriaID">
-            {{ cat.nombreCategoria }}
+          <option *ngFor="let cat of categorias" [value]="cat.CategoriaID || cat.categoriaID">
+            {{ cat.NombreCategoria || cat.nombreCategoria }}
           </option>
         </select>
       </div>
@@ -29,8 +29,8 @@
         <label>Marca:</label>
         <select [(ngModel)]="filtros.marca">
           <option value="">Todas</option>
-          <option *ngFor="let marca of marcas" [value]="marca.marcaID">
-            {{ marca.nombreMarca }}
+          <option *ngFor="let marca of marcas" [value]="marca.MarcaID || marca.marcaID">
+            {{ marca.NombreMarca || marca.nombreMarca }}
           </option>
         </select>
       </div>
@@ -60,6 +60,9 @@
   <!-- Error -->
   <div *ngIf="error" class="error">
     {{ error }}
+    <button (click)="cargarDispositivos()" class="btn btn-danger" style="margin-top: 10px;">
+      🔄 Reintentar
+    </button>
   </div>
 
   <!-- Tabla de dispositivos -->
@@ -80,25 +83,24 @@
       </thead>
       <tbody>
         <tr *ngFor="let dispositivo of dispositivos">
-          <td>{{ dispositivo.codigoDispositivo }}</td>
-          <td>{{ dispositivo.nombreDispositivo }}</td>
-          <td>{{ dispositivo.nombreCategoria }}</td>
-          <td>{{ dispositivo.nombreMarca }}</td>
-          <td>{{ dispositivo.modelo }}</td>
+          <td>{{ dispositivo.CodigoDispositivo || dispositivo.codigoDispositivo }}</td>
+          <td>{{ dispositivo.NombreDispositivo || dispositivo.nombreDispositivo }}</td>
+          <td>{{ dispositivo.NombreCategoria || dispositivo.nombreCategoria || 'N/A' }}</td>
+          <td>{{ dispositivo.NombreMarca || dispositivo.nombreMarca || 'N/A' }}</td>
+          <td>{{ dispositivo.Modelo || dispositivo.modelo || 'N/A' }}</td>
           <td>
-            <span class="estado-badge" [ngClass]="getEstadoClass(dispositivo.estado)">
-              {{ dispositivo.estado }}
+            <span class="estado-badge" [ngClass]="getEstadoClass(dispositivo.Estado || dispositivo.estado || '')">
+              {{ dispositivo.Estado || dispositivo.estado }}
             </span>
           </td>
           <td>
-            <span class="condicion-badge" [ngClass]="getCondicionClass(dispositivo.condicion)">
-              {{ dispositivo.condicion }}
+            <span class="condicion-badge" [ngClass]="getCondicionClass(dispositivo.Condicion || dispositivo.condicion || '')">
+              {{ dispositivo.Condicion || dispositivo.condicion }}
             </span>
           </td>
-          <td>{{ dispositivo.nombreUbicacion || 'Sin ubicación' }}</td>
+          <td>{{ dispositivo.NombreUbicacion || dispositivo.nombreUbicacion || 'Sin ubicación' }}</td>
           <td class="acciones">
-            <button [routerLink]="['/dispositivos', dispositivo.dispositivoID]" 
-                    class="btn btn-sm btn-info">Ver</button>
+            <button class="btn btn-sm btn-info">Ver</button>
             <button *ngIf="esTecnicoOSuperior" (click)="editarDispositivo(dispositivo)" 
                     class="btn btn-sm btn-warning">Editar</button>
             <button *ngIf="esAdmin" (click)="eliminarDispositivo(dispositivo)" 
@@ -154,8 +156,8 @@
             <label>Categoría *</label>
             <select [(ngModel)]="dispositivoActual.categoriaId" name="categoriaId" required>
               <option value="">Seleccionar categoría</option>
-              <option *ngFor="let cat of categorias" [value]="cat.categoriaID">
-                {{ cat.nombreCategoria }}
+              <option *ngFor="let cat of categorias" [value]="cat.CategoriaID || cat.categoriaID">
+                {{ cat.NombreCategoria || cat.nombreCategoria }}
               </option>
             </select>
           </div>
@@ -166,8 +168,8 @@
             <label>Marca *</label>
             <select [(ngModel)]="dispositivoActual.marcaId" name="marcaId" required>
               <option value="">Seleccionar marca</option>
-              <option *ngFor="let marca of marcas" [value]="marca.marcaID">
-                {{ marca.nombreMarca }}
+              <option *ngFor="let marca of marcas" [value]="marca.MarcaID || marca.marcaID">
+                {{ marca.NombreMarca || marca.nombreMarca }}
               </option>
             </select>
           </div>
@@ -215,8 +217,8 @@
             <label>Ubicación</label>
             <select [(ngModel)]="dispositivoActual.ubicacionId" name="ubicacionId">
               <option value="">Sin ubicación</option>
-              <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.ubicacionID">
-                {{ ubicacion.nombreUbicacion }}
+              <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.UbicacionID || ubicacion.ubicacionID">
+                {{ ubicacion.NombreUbicacion || ubicacion.nombreUbicacion }}
               </option>
             </select>
           </div>

@@ -1,7 +1,34 @@
-<header>
-  <h1>Sistema de Inventario</h1>
-</header>
-<app-navbar *ngIf="mostrarNavbar" />
-<main>
-  <router-outlet />
-</main>
+<!DOCTYPE html>
+<div class="app-container">
+  <!-- Header principal solo si no está logueado -->
+  <header class="app-header" *ngIf="!isAuthenticated">
+    <div class="container">
+      <h1>Sistema de Inventario Tecnológico</h1>
+      <p>Gestión integral de dispositivos y equipos</p>
+    </div>
+  </header>
+  
+  <!-- Navbar para usuarios autenticados -->
+  <app-navbar *ngIf="mostrarNavbar" />
+  
+  <!-- Contenido principal -->
+  <main class="main-content" [class.with-navbar]="mostrarNavbar">
+    <router-outlet />
+  </main>
+  
+  <!-- Footer -->
+  <footer class="app-footer" *ngIf="!isAuthenticated">
+    <div class="container">
+      <p>&copy; 2024 Sistema de Inventario. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  
+  <!-- Componente de notificaciones -->
+  <app-notifications />
+  
+  <!-- Loading global si es necesario -->
+  <div class="global-loading" *ngIf="globalLoading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+</div>

@@ -40,7 +40,8 @@ export class LoginComponent {
       password: this.password 
     }).subscribe({
       next: (response) => {
-        if (response.success) {
+        // Verificar si el login fue exitoso por la presencia del token
+        if (response.token) {
           this.router.navigate([this.returnUrl]);
         }
       },

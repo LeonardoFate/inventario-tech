@@ -1,10 +1,217 @@
-<div class="usuarios-container">
+<div class="catalogos-container">
   <div class="header">
     <h1>Gestión de Usuarios</h1>
+    <button (click)="nuevoUsuario()" class="btn btn-primary">
+      Nuevo Usuario
+    </button>
   </div>
-  
-  <div class="info-message">
-    <p>Esta funcionalidad está en desarrollo.</p>
-    <p>Por el momento, la gestión de usuarios se realiza a través de la API directamente.</p>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    Cargando usuarios...
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button (click)="cargarUsuarios()" class="btn btn-danger" style="margin-top: 10px;">
+      🔄 Reintentar
+    </button>
+  </div>
+
+  <!-- Tabla de usuarios -->
+  <div *ngIf="!loading && !error" class="tabla-container">
+    <table class="usuarios-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Nombre Completo</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Departamento</th>
+          <th>Ubicación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.UsuarioID || usuario.usuarioId }}</td>
+          <td>
+            <div class="usuario-info">
+              <strong>{{ usuario.nombreUsuario }}</strong>
+              <span *ngIf="usuario.UsuarioID === currentUser?.UsuarioID" class="badge-current">
+                (Tú)
+              </span>
+            </div>
+          </td>
+          <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
+          <td>
+            <a [href]="'mailto:' + usuario.email" class="email-link">
+              {{ usuario.email }}
+            </a>
+          </td>
+          <td>
+            <span class="rol-badge" [ngClass]="getRolClass(usuario.rol)">
+              {{ usuario.rol }}
+            </span>
+          </td>
+          <td>{{ usuario.departamento || 'No asignado' }}</td>
+          <td>{{ getUbicacionNombre(usuario.ubicacionId) }}</td>
+          <td class="acciones">
+            <button (click)="editarUsuario(usuario)" class="btn btn-sm btn-warning">
+              Editar
+            </button>
+            <button *ngIf="usuario.UsuarioID !== currentUser?.UsuarioID" 
+                    (click)="eliminarUsuario(usuario)" 
+                    class="btn btn-sm btn-danger">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Mensaje cuando no hay datos -->
+    <div *ngIf="usuarios.length === 0" class="no-data">
+      No hay usuarios registrados en el sistema.
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear/editar usuarios -->
+<div *ngIf="mostrarModal" class="modal-overlay" (click)="cerrarModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editando ? 'Editar' : 'Nuevo' }} Usuario</h2>
+      <button (click)="cerrarModal()" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="guardarUsuario()">
+        
+        <!-- Información básica -->
+        <div class="form-section">
+          <h3>Información Básica</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre de Usuario *</label>
+              <input type="text" [(ngModel)]="usuarioActual.nombreUsuario" 
+                     name="nombreUsuario" required placeholder="ej: jperez">
+            </div>
+            
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" [(ngModel)]="usuarioActual.email" 
+                     name="email" required placeholder="usuario@empresa.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombres *</label>
+              <input type="text" [(ngModel)]="usuarioActual.nombres" 
+                     name="nombres" required placeholder="Juan Carlos">
+            </div>
+            
+            <div class="form-group">
+              <label>Apellidos *</label>
+              <input type="text" [(ngModel)]="usuarioActual.apellidos" 
+                     name="apellidos" required placeholder="Pérez García">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cédula</label>
+              <input type="text" [(ngModel)]="usuarioActual.cedula" 
+                     name="cedula" placeholder="1234567890" maxlength="10">
+            </div>
+            
+            <div class="form-group" *ngIf="!editando">
+              <label>Contraseña Temporal *</label>
+              <input type="password" [(ngModel)]="usuarioActual.password" 
+                     name="password" [required]="!editando" placeholder="Mínimo 6 caracteres">
+            </div>
+          </div>
+        </div>
+
+        <!-- Información organizacional -->
+        <div class="form-section">
+          <h3>Información Organizacional</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Rol *</label>
+              <select [(ngModel)]="usuarioActual.rol" name="rol" required>
+                <option *ngFor="let rol of roles" [value]="rol">
+                  {{ rol }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Departamento</label>
+              <select [(ngModel)]="usuarioActual.departamento" name="departamento">
+                <option value="">Sin departamento</option>
+                <option *ngFor="let dept of departamentos" [value]="dept">
+                  {{ dept }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ubicación</label>
+              <select [(ngModel)]="usuarioActual.ubicacionId" name="ubicacionId">
+                <option value="">Sin ubicación</option>
+                <option *ngFor="let ubicacion of ubicaciones" 
+                        [value]="ubicacion.UbicacionID || ubicacion.ubicacionID">
+                  {{ ubicacion.NombreUbicacion || ubicacion.nombreUbicacion }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Estado</label>
+              <select [(ngModel)]="usuarioActual.activo" name="activo">
+                <option [value]="true">Activo</option>
+                <option [value]="false">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información sobre roles -->
+        <div class="form-section">
+          <h4>Permisos por Rol</h4>
+          <div class="permisos-info">
+            <div class="permiso-item">
+              <strong>Administrador:</strong> Acceso completo al sistema, gestión de usuarios
+            </div>
+            <div class="permiso-item">
+              <strong>Gerente:</strong> Gestión de inventario, reportes, catálogos
+            </div>
+            <div class="permiso-item">
+              <strong>Técnico:</strong> Gestión de dispositivos, mantenimiento
+            </div>
+            <div class="permiso-item">
+              <strong>Empleado:</strong> Visualización de inventario asignado
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" (click)="cerrarModal()" class="btn btn-outline">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            {{ editando ? 'Actualizar' : 'Crear' }} Usuario
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

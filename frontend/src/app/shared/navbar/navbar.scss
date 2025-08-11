@@ -101,39 +101,4 @@
   .user-info {
     text-align: center;
   }
-}If="categorias.length === 0" class="no-data">
-      No hay categorías registradas.
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div *ngIf="mostrarModal" class="modal-overlay" (click)="cerrarModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Nueva Categoría</h2>
-      <button (click)="cerrarModal()" class="close-btn">&times;</button>
-    </div>
-    
-    <div class="modal-body">
-      <form (ngSubmit)="guardarCategoria()">
-        <div class="form-group">
-          <label>Nombre de la Categoría *</label>
-          <input type="text" [(ngModel)]="categoriaActual.nombreCategoria" 
-                 name="nombreCategoria" required placeholder="Ej: Laptops, Monitores, etc.">
-        </div>
-        
-        <div class="form-group">
-          <label>Descripción</label>
-          <textarea [(ngModel)]="categoriaActual.descripcion" name="descripcion" 
-                    rows="3" placeholder="Descripción opcional..."></textarea>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" (click)="cerrarModal()" class="btn btn-outline">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Crear</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+}

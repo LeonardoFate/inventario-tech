@@ -27,14 +27,14 @@
       </thead>
       <tbody>
         <tr *ngFor="let ubicacion of ubicaciones">
-          <td>{{ ubicacion.ubicacionID }}</td>
-          <td>{{ ubicacion.nombreUbicacion }}</td>
-          <td>{{ ubicacion.direccion || '-' }}</td>
-          <td>{{ ubicacion.piso || '-' }}</td>
-          <td>{{ ubicacion.edificio || '-' }}</td>
-          <td>{{ ubicacion.ciudad || '-' }}</td>
-          <td>{{ ubicacion.provincia || '-' }}</td>
-          <td>{{ ubicacion.totalDispositivos }}</td>
+          <td>{{ ubicacion.UbicacionID || ubicacion.ubicacionID }}</td>
+          <td>{{ ubicacion.NombreUbicacion || ubicacion.nombreUbicacion }}</td>
+          <td>{{ ubicacion.Direccion || ubicacion.direccion || '-' }}</td>
+          <td>{{ ubicacion.Piso || ubicacion.piso || '-' }}</td>
+          <td>{{ ubicacion.Edificio || ubicacion.edificio || '-' }}</td>
+          <td>{{ ubicacion.Ciudad || ubicacion.ciudad || '-' }}</td>
+          <td>{{ ubicacion.Provincia || ubicacion.provincia || '-' }}</td>
+          <td>{{ ubicacion.TotalDispositivos || ubicacion.totalDispositivos }}</td>
         </tr>
       </tbody>
     </table>

@@ -27,15 +27,24 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
+    console.log('🔐 AuthService - Iniciando login con:', credentials.nombreUsuario);
+    
     return this.http.post<AuthResponse>(`${this.API_URL}/auth/login`, credentials)
       .pipe(
         tap(response => {
+          console.log('🔐 AuthService - Respuesta de login completa:', response);
+          console.log('🔐 AuthService - Usuario en respuesta:', response.usuario);
+          
           if (response.token) {
-            this.setSession(response.token, response.usuario);
+            // Normalizar el usuario para asegurar que tenga la estructura correcta
+            const normalizedUser = this.normalizeUser(response.usuario);
+            console.log('🔐 AuthService - Usuario normalizado:', normalizedUser);
+            
+            this.setSession(response.token, normalizedUser);
           }
         }),
         catchError(error => {
-          console.error('Error en login:', error);
+          console.error('🔐 AuthService - Error en login:', error);
           throw error;
         })
       );
@@ -45,8 +54,10 @@ export class AuthService {
     return this.http.get<{ usuario: Usuario }>(`${this.API_URL}/auth/profile`)
       .pipe(
         tap(response => {
-          this.currentUserSubject.next(response.usuario);
-          localStorage.setItem(this.USER_KEY, JSON.stringify(response.usuario));
+          console.log('🔐 AuthService - Perfil obtenido:', response.usuario);
+          const normalizedUser = this.normalizeUser(response.usuario);
+          this.currentUserSubject.next(normalizedUser);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(normalizedUser));
         })
       );
   }
@@ -62,7 +73,31 @@ export class AuthService {
       );
   }
 
+  private normalizeUser(user: any): Usuario {
+    console.log('🔧 AuthService - Normalizando usuario:', user);
+    
+    // El backend puede enviar el usuario con diferentes estructuras
+    // Vamos a normalizar para asegurar consistencia
+    const normalized: Usuario = {
+      usuarioId: user.UsuarioID || user.usuarioId,
+      UsuarioID: user.UsuarioID || user.usuarioId,
+      nombreUsuario: user.NombreUsuario || user.nombreUsuario,
+      email: user.Email || user.email,
+      nombres: user.Nombres || user.nombres,
+      apellidos: user.Apellidos || user.apellidos,
+      cedula: user.Cedula || user.cedula,
+      rol: user.Rol || user.rol || 'Empleado', // Fallback a 'Empleado' si no hay rol
+      departamento: user.Departamento || user.departamento,
+      ubicacionId: user.UbicacionID || user.ubicacionId
+    };
+    
+    console.log('🔧 AuthService - Usuario normalizado resultado:', normalized);
+    return normalized;
+  }
+
   private setSession(token: string, user: Usuario): void {
+    console.log('🔐 AuthService - Guardando sesión:', { token: token.substring(0, 20) + '...', user });
+    
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     this.isLoggedInSubject.next(true);
@@ -70,6 +105,7 @@ export class AuthService {
   }
 
   private clearSession(): void {
+    console.log('🔐 AuthService - Limpiando sesión');
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     this.isLoggedInSubject.next(false);
@@ -83,7 +119,17 @@ export class AuthService {
 
   private getUserFromStorage(): Usuario | null {
     const userData = localStorage.getItem(this.USER_KEY);
-    return userData ? JSON.parse(userData) : null;
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        console.log('🔐 AuthService - Usuario desde storage:', user);
+        return this.normalizeUser(user);
+      } catch (error) {
+        console.error('🔐 AuthService - Error parseando usuario desde storage:', error);
+        return null;
+      }
+    }
+    return null;
   }
 
   getToken(): string | null {
@@ -97,23 +143,38 @@ export class AuthService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const currentTime = Math.floor(Date.now() / 1000);
-      return payload.exp > currentTime;
+      const isValid = payload.exp > currentTime;
+      console.log('🔐 AuthService - Token válido:', isValid, 'Expira:', new Date(payload.exp * 1000));
+      return isValid;
     } catch {
+      console.log('🔐 AuthService - Error verificando token');
       return false;
     }
   }
 
   getCurrentUser(): Usuario | null {
-    return this.currentUserSubject.value;
+    const user = this.currentUserSubject.value;
+    console.log('🔐 AuthService - getCurrentUser devuelve:', user);
+    return user;
   }
 
   hasRole(roles: string[]): boolean {
     const user = this.getCurrentUser();
-    return user ? roles.includes(user.rol) : false;
+    console.log('🔐 AuthService - Verificando roles:', { userRole: user?.rol, requiredRoles: roles });
+    
+    if (!user || !user.rol) {
+      console.log('🔐 AuthService - No hay usuario o rol');
+      return false;
+    }
+    
+    const hasAccess = roles.includes(user.rol);
+    console.log('🔐 AuthService - Tiene acceso:', hasAccess);
+    return hasAccess;
   }
 
   private checkTokenValidity(): void {
     if (this.hasToken() && !this.isAuthenticated()) {
+      console.log('🔐 AuthService - Token inválido, limpiando sesión');
       this.clearSession();
     }
   }

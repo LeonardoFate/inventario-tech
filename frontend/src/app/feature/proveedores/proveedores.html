@@ -27,14 +27,14 @@
       </thead>
       <tbody>
         <tr *ngFor="let proveedor of proveedores">
-          <td>{{ proveedor.proveedorID }}</td>
-          <td>{{ proveedor.nombreProveedor }}</td>
-          <td>{{ proveedor.nombreContacto || '-' }}</td>
-          <td>{{ proveedor.email || '-' }}</td>
-          <td>{{ proveedor.telefono || '-' }}</td>
-          <td>{{ proveedor.ruc || '-' }}</td>
-          <td>{{ proveedor.ciudad || '-' }}</td>
-          <td>{{ proveedor.totalDispositivos }}</td>
+          <td>{{ proveedor.ProveedorID || proveedor.proveedorID }}</td>
+          <td>{{ proveedor.NombreProveedor || proveedor.nombreProveedor }}</td>
+          <td>{{ proveedor.NombreContacto || proveedor.nombreContacto || '-' }}</td>
+          <td>{{ proveedor.Email || proveedor.email || '-' }}</td>
+          <td>{{ proveedor.Telefono || proveedor.telefono || '-' }}</td>
+          <td>{{ proveedor.RUC || proveedor.ruc || '-' }}</td>
+          <td>{{ proveedor.Ciudad || proveedor.ciudad || '-' }}</td>
+          <td>{{ proveedor.TotalDispositivos || proveedor.totalDispositivos }}</td>
         </tr>
       </tbody>
     </table>
